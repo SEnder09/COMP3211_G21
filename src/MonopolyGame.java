@@ -77,17 +77,17 @@ public class MonopolyGame {
                 new Property("Go", 0, 0), // 0
                 new Property("Central", 800, 90), //  1
                 new Property("Wan Chai", 700, 65), // 2
-                new Property("Income tax", 600, 60), // 3
-                new Property("Stanley", 0, 0), // 4
-                new Property("Just Visiting/In Jail", 400, 10), // 5
-                new Property("Shek O", 0, 0), //6
+                new Property("Income tax", 0, 0), // 3
+                new Property("Stanley", 600, 60), // 4
+                new Property("Just Visiting/In Jail", 0, 0), // 5
+                new Property("Shek O", 400, 10), //6
                 new Property("Mong Kok", 500, 40), // 7
-                new Property("Chance", 400, 15), // 8
-                new Property("Tsing Yi", 0, 0), // 9
-                new Property("Free Parking", 700, 75), // 10
-                new Property("Shatin", 0, 0), // 11
-                new Property("Chance", 400, 20), // 12
-                new Property("Tuen Mun", 0, 0), // 13
+                new Property("Chance", 0, 0), // 8
+                new Property("Tsing Yi", 400, 15), // 9
+                new Property("Free Parking", 0, 0), // 10
+                new Property("Shatin", 700, 75), // 11
+                new Property("Chance", 0, 0), // 12
+                new Property("Tuen Mun", 400, 20), // 13
                 new Property("Tai Po", 500, 25), //14
                 new Property("Go to jail",0,0), // 15
                 new Property("Sai Kung", 400, 10), //16
@@ -134,27 +134,27 @@ public class MonopolyGame {
         //16:go to jail
         // currentPlayer.setPosition(0);
         Property property = properties[currentPlayer.position];
-        if(currentPlayer.position == 0){ // Go
+        if(currentPlayer.position == 1){ // Go
             handleGo(currentPlayer);
         }
-        if(currentPlayer.position == 4) // income tax
+        else if(currentPlayer.position == 4) // income tax
         {
             handleIncomeTax(currentPlayer);
         }
-        if(currentPlayer.position == 6) // just visiting/In jail
+        else if(currentPlayer.position == 6) // just visiting/In jail
         {
             handleJustVisiting(currentPlayer);
         }
-        if(currentPlayer.position == 9 || currentPlayer.position == 13 || currentPlayer.position == 19) // Chance
+        else if(currentPlayer.position == 9 || currentPlayer.position == 13 || currentPlayer.position == 19) // Chance
         {
             handleChance(currentPlayer);
         }
-        if(currentPlayer.position == 11) // Free parking
+        else if(currentPlayer.position == 11) // Free parking
         {
             handleFreeParking(currentPlayer);
 
         }
-        if(currentPlayer.position == 15) // Go to jail
+        else if(currentPlayer.position == 16) // Go to jail
         {
             handleGoToJail(currentPlayer);
         }
@@ -211,8 +211,8 @@ class DiceResult {
 }
     private DiceResult rollDice() {
         Random rand = new Random();
-        int dice1 = rand.nextInt(6) + 1;
-        int dice2 = rand.nextInt(6) + 1;
+        int dice1 = rand.nextInt(4) + 1;
+        int dice2 = rand.nextInt(4) + 1;
         boolean sameDice = (dice1 == dice2);
         return new DiceResult(dice1, dice2, sameDice); // Return a new DiceResult object
     }
@@ -224,7 +224,7 @@ class DiceResult {
     }
     private void handleProperty(Player player) {
         if (player.position < properties.length) {
-            Property property = properties[player.position];
+            Property property = properties[player.position - 1];
             if (!property.owned) {
                 System.out.println("You landed on " + property.name + ". Price: " + property.price);
                 if (player.money >= property.price) {
@@ -376,13 +376,13 @@ class DiceResult {
             // Game loop
             for (int round = 0; round < 5; round++) { // 5 rounds for demonstration
                 for (int i = 0; i < game.players.size(); i++) {
-                    Player currentPlayer = players.get(currentPlayerIndex);
-                    if(currentPlayer.money < 0 ){
-                        System.out.println("Sorry, You go bankrupt.");
-                        // Move to next player
-                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-                        removePlayer(currentPlayer.name);
-                    }
+//                    Player currentPlayer = players.get(currentPlayerIndex);
+//                    if(currentPlayer.money < 0 ){
+//                        System.out.println("Sorry, You go bankrupt.");
+//                        // Move to next player
+//                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+//                        removePlayer(currentPlayer.name);
+//                    }
                     game.playTurn();
                 }
             }
