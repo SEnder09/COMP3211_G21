@@ -77,17 +77,17 @@ public class MonopolyGame {
                 new Property("Go", 0, 0), // 0
                 new Property("Central", 800, 90), //  1
                 new Property("Wan Chai", 700, 65), // 2
-                new Property("Stanley", 600, 60), // 3
-                new Property("Income tax", 0, 0), // 4
-                new Property("Shek O", 400, 10), // 5
-                new Property("Just Visiting/In Jail", 0, 0), //6
+                new Property("Income tax", 600, 60), // 3
+                new Property("Stanley", 0, 0), // 4
+                new Property("Just Visiting/In Jail", 400, 10), // 5
+                new Property("Shek O", 0, 0), //6
                 new Property("Mong Kok", 500, 40), // 7
-                new Property("Tsing Yi", 400, 15), // 8
-                new Property("Chance", 0, 0), // 9
-                new Property("Shatin", 700, 75), // 10
-                new Property("Free Parking", 0, 0), // 11
-                new Property("Tuen Mun", 400, 20), // 12
-                new Property("Chance", 0, 0), // 13
+                new Property("Chance", 400, 15), // 8
+                new Property("Tsing Yi", 0, 0), // 9
+                new Property("Free Parking", 700, 75), // 10
+                new Property("Shatin", 0, 0), // 11
+                new Property("Chance", 400, 20), // 12
+                new Property("Tuen Mun", 0, 0), // 13
                 new Property("Tai Po", 500, 25), //14
                 new Property("Go to jail",0,0), // 15
                 new Property("Sai Kung", 400, 10), //16
