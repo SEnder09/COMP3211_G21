@@ -107,6 +107,7 @@ public class MonopolyGame {
     public void playTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
         System.out.println(currentPlayer.name + "'s turn.");
+        System.out.println(currentPlayer.name + " have $" + currentPlayer.money);
 
         // Roll the dice
         //int diceRoll = rollDice();
@@ -273,7 +274,7 @@ class DiceResult {
 
     private void handleJustVisiting(Player player){ // Also the state of in jail
         int diceCount = 0;
-        while(player.inJail){ // need to get the value of two dice
+        while(player.inJail && !(diceCount >= 3)){ // need to get the value of two dice
             DiceResult result = rollDice(); // Call the rollDice method
             int dice1 = result.getDice1();
             int dice2 = result.getDice2();
@@ -285,6 +286,7 @@ class DiceResult {
                 System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " gets out of jail now.");
                 int position = (player.position + sum) % BOARD_SIZE;
                 player.setPosition(position); // Move player to the position of adding the dice they roll
+                break;
             }
             diceCount++;
             if(diceCount == 1){
@@ -309,7 +311,8 @@ class DiceResult {
                         player.money -= 150;
                     }
                     else {
-
+                        System.out.println("You don't have enough money to pay fine, you are broke!");
+                        removePlayer(player.name);
                 }
             }
 
