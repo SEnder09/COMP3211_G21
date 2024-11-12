@@ -95,6 +95,7 @@ public class MonopolyGame {
                 new Property("Chance",0,0), //18
                 new Property("Tai O", 600, 25) //19
         };
+
         players = new ArrayList<>();
         currentPlayerIndex = 0;
     }
@@ -115,15 +116,21 @@ public class MonopolyGame {
         int diceRoll = result.getSum(); // Get the sum of the dice
         // boolean sameDice = result.isSameDice(); // Get the boolean result
         // System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-        currentPlayer.state = 1;
+
 
 
         // Move the player
-        if(!currentPlayer.inJail) { // if player not in jail, move
+        if(!currentPlayer.inJail && currentPlayer.state==0) { // if player not in jail, move
+            System.out.println(currentPlayer.name + " rolled a " + diceRoll);
+            currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
+            System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
+        }
+        if(!currentPlayer.inJail && currentPlayer.state==1) { // if player not in jail, move
             System.out.println(currentPlayer.name + " rolled a " + diceRoll);
             currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
             System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
         }
+        currentPlayer.state = 1;
         // start implement method
         //currentPlayer.position = 1/4/6/9/11/13/16/19
         //1:go
@@ -218,7 +225,7 @@ class DiceResult {
     }
     private void handleIncomeTax(Player player){
         Property property = properties[player.position];
-        player.money -= 10 * (player.money / 10);
+        player.money -= 10 * (player.money / 100);
         // System.out.println("Now you are in the" + player.position);
         System.out.println("Your money becomes " + player.money);
     }
@@ -345,6 +352,8 @@ class DiceResult {
         MonopolyGame game = new MonopolyGame();
         String qinput = "1";
         int count = 0;
+        players = new ArrayList<>();
+
         while (qinput.equals("1")) {
             System.out.println("1.Enter your name\n2.Generate a random name ");
             Scanner scanner = new Scanner(System.in);
@@ -356,15 +365,17 @@ class DiceResult {
                 Scanner nameScanner = new Scanner(System.in);
                 name = nameScanner.nextLine();
                 game.addPlayer(name);
+                count++;
             }
-            if (input.equals("2")) {
+            else if (input.equals("2")) {
                 String randomName = RandomNameGenerator.generateRandomName();
                 game.addPlayer(randomName);
                 System.out.println("Your name is: "+randomName);
+                count++;
             }
-            count++;
-            // need to add a check condition to check if there are >=2 && <=6 players
-            // Lack of the implementation of Go, Chance, Income tax, Free Parking, Go to Jail
+            else {
+                System.out.println("Error input!");
+            }
             System.out.println("1.Add more player's name\n2.Finish entering name, start the game");
             Scanner qscanner = new Scanner(System.in);
             qinput = qscanner.nextLine();
@@ -376,13 +387,13 @@ class DiceResult {
             // Game loop
             for (int round = 0; round < 5; round++) { // 5 rounds for demonstration
                 for (int i = 0; i < game.players.size(); i++) {
-//                    Player currentPlayer = players.get(currentPlayerIndex);
-//                    if(currentPlayer.money < 0 ){
-//                        System.out.println("Sorry, You go bankrupt.");
-//                        // Move to next player
-//                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-//                        removePlayer(currentPlayer.name);
-//                    }
+                    Player currentPlayer = players.get(currentPlayerIndex);
+                    if(currentPlayer.money < 0 ){
+                        System.out.println("Sorry, You go bankrupt.");
+                        // Move to next player
+                        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+                        removePlayer(currentPlayer.name);
+                    }
                     game.playTurn();
                 }
             }
