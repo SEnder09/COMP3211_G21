@@ -31,6 +31,7 @@ class Player {
     int position;
     boolean inJail;
     int state;
+    int bonus;
 
     public Player(String name) {
         this.name = name;
@@ -39,6 +40,7 @@ class Player {
         this.inJail = false;
         this.state = 0; // 0: first turn, in 'GO' doesn't earn  1000
                         // 1: other turn, in 'GO' get 1000
+        this.bonus = 0;
     }
     public String getName() {
         return name;
@@ -117,16 +119,20 @@ public class MonopolyGame {
         // boolean sameDice = result.isSameDice(); // Get the boolean result
         // System.out.println(currentPlayer.name + " rolled a " + diceRoll);
 
+        currentPlayer.bonus = 0;
 
-
-        // Move the player
+        // Stand in GO in the first round
         if(!currentPlayer.inJail && currentPlayer.state==0) { // if player not in jail, move
             System.out.println(currentPlayer.name + " rolled a " + diceRoll);
             currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
             System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
         }
+        // Not stand in GO in the first round
         if(!currentPlayer.inJail && currentPlayer.state==1) { // if player not in jail, move
             System.out.println(currentPlayer.name + " rolled a " + diceRoll);
+            if((currentPlayer.position + diceRoll) > 20){
+                currentPlayer.bonus = 1;
+            }
             currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
             System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
         }
@@ -141,10 +147,10 @@ public class MonopolyGame {
         //16:go to jail
         // currentPlayer.setPosition(0);
         Property property = properties[currentPlayer.position];
-        if(currentPlayer.position == 1){ // Go
+        if(currentPlayer.state == 1 && currentPlayer.bonus == 1){ // Go
             handleGo(currentPlayer);
         }
-        else if(currentPlayer.position == 4) // income tax
+        if(currentPlayer.position == 4) // income tax
         {
             handleIncomeTax(currentPlayer);
         }
@@ -257,7 +263,7 @@ class DiceResult {
         if(player.state == 1){
             player.money += 1500;
             // System.out.println("Now you are in the " + player.position);
-            System.out.println("You have earned 1500 HKD. Now your assets become " + player.money);
+            System.out.println("You have earned 1500 HKD. Now your asset becomes " + player.money);
         }
     }
 
