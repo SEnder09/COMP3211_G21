@@ -164,7 +164,7 @@ public class MonopolyGame {
         }
         else if(currentPlayer.position == 11) // Free parking
         {
-            handleFreeParking(currentPlayer);
+            handleFreeParking();
 
         }
         else if(currentPlayer.position == 16) // Go to jail
@@ -181,6 +181,9 @@ public class MonopolyGame {
 
         // Move to next player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        System.out.println("<-- Enter to continue -->");
+        Scanner qscanner = new Scanner(System.in);
+        String nextTurn = qscanner.nextLine();
     }
 
 /*    private int rollDice() {
@@ -280,7 +283,7 @@ class DiceResult {
         System.out.println("Total money: " + player.getMoney());
     }
 
-    private void handleFreeParking(Player player) {
+    private void handleFreeParking() {
         // System.out.println("Now you are in the " + player.position);
         System.out.println("You landed on Free Parking.");
     }
