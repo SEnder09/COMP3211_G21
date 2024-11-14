@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,14 @@ class Property {
     int price;
     int rent;
     boolean owned;
+    Player owner;
 
     public Property(String name, int price, int rent) {
         this.name = name;
         this.price = price;
         this.rent = rent;
         this.owned = false;
+        this.owner = null;
     }
 }
 
@@ -33,6 +36,7 @@ class Player {
     boolean inJail;
     int state;
     int bonus;
+    List<Property> ownedProperties;
 
     public Player(String name) {
         this.name = name;
@@ -42,7 +46,9 @@ class Player {
         this.state = 0; // 0: first turn, in 'GO' doesn't earn  1000
         // 1: other turn, in 'GO' get 1000
         this.bonus = 0;
+        this.ownedProperties = new ArrayList<>();
     }
+
     public String getName() {
         return name;
     }
@@ -63,8 +69,15 @@ class Player {
         return position;
     }
 
+    public List<Property> getOwnedProperties() {
+        return ownedProperties;
+    }
 
+    public void addProperty(Property property) {
+        ownedProperties.add(property);
+    }
 }
+
 
 public class MonopolyGame {
     private static final int BOARD_SIZE = 20;
@@ -110,8 +123,6 @@ public class MonopolyGame {
     public static void removePlayer(String name) {
         players.remove(name);
     }
-
-    ;
 
     public void playTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
@@ -201,24 +212,66 @@ public class MonopolyGame {
         scanner.nextLine();
     }
 
-
-
     private void queryNextPlayer() {
-        //code
+        int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        Player nextPlayer = players.get(nextPlayerIndex);
+        System.out.println("Next Player: " + nextPlayer.getName());
+        System.out.println("Money: $" + nextPlayer.getMoney());
+        System.out.println("Position: " + nextPlayer.getPosition());
+        System.out.println("In Jail: " + (nextPlayer.inJail ? "Yes" : "No"));
+        System.out.println("Owned Properties:");
+        for (Property property : nextPlayer.getOwnedProperties()) {
+            System.out.println(property.name + " (Price: $" + property.price + ", Rent: $" + property.rent + ")");
+        }
     }
 
     private void viewGameStatus() {
-        //code
+        System.out.println("Game Status:");
+        System.out.println("Board:");
+        for (int i = 0; i < properties.length; i++) {
+            Property property = properties[i];
+            System.out.print("Square " + i + ": " + property.name);
+            if (property.owned) {
+                System.out.print(" (Owned by " + property.owner.getName() + ")");
+            }
+            System.out.println();
+        }
+        System.out.println("\nPlayers' Positions:");
+        for (Player player : players) {
+            System.out.println(player.getName() + " is on square " + player.getPosition());
+        }
     }
 
     private void viewAllPlayersStatus() {
-        //code
+        for (Player player : players) {
+            System.out.println("Player Name: " + player.getName());
+            System.out.println("Money: $" + player.getMoney());
+            System.out.println("Position: " + player.getPosition());
+            System.out.println("In Jail: " + (player.inJail ? "Yes" : "No"));
+            System.out.println("Properties owned:");
+            for (Property property : player.getOwnedProperties()) {
+                System.out.println(property.name + " (Price: $" + property.price + ", Rent: $" + property.rent + ")");
+            }
+            System.out.println(); // Add a blank line 
+        }
     }
 
     private void viewPlayerStatus(String playerName) {
-        //code
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(playerName)) {
+                System.out.println("Player Name: " + player.getName());
+                System.out.println("Money: $" + player.getMoney());
+                System.out.println("Position: " + player.getPosition());
+                System.out.println("In Jail: " + (player.inJail ? "Yes" : "No"));
+                System.out.println("Properties owned: ");
+                for (Property property : player.getOwnedProperties()) {
+                    System.out.println(property.name + " (Price: $" + property.price + ", Rent: $" + property.rent + ")");
+                }
+                return;
+            }
+        }
+        System.out.println("Player with name " + playerName + " not found.");
     }
-
 
     /*    private int rollDice() {
             Random rand = new Random();
@@ -289,6 +342,8 @@ public class MonopolyGame {
                     if (input.equalsIgnoreCase("yes")) {
                         player.money -= property.price;
                         property.owned = true;
+                        property.owner = player;
+                        player.addProperty(property); 
                         System.out.println("You bought " + property.name + ". Remaining money: " + player.money);
                     }
                 } else {
