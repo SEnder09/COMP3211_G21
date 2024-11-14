@@ -269,7 +269,7 @@ public class MonopolyGame {
                 return;
             }
         }
-        System.out.println("Player with name " + playerName + " not found.");
+        System.out.println("Player not found.");
     }
 
     /*    private int rollDice() {
