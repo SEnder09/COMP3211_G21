@@ -125,9 +125,14 @@ public class MonopolyGame {
 
     public void playTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
+
+        // Display the round number
+        if (currentPlayerIndex == 0) {
+            System.out.println("Round " + (round + 1));
+        }
+
         System.out.println(currentPlayer.name + "'s turn.");
         System.out.println(currentPlayer.name + " has $" + currentPlayer.money);
-
         Scanner scanner = new Scanner(System.in);
         boolean turnEnd = false;
 
@@ -142,17 +147,17 @@ public class MonopolyGame {
 
                 if (!currentPlayer.inJail && currentPlayer.state == 0) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
-                    System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
+                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
+                    System.out.println(currentPlayer.name + " moved to square " + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
                 }
 
                 if (!currentPlayer.inJail && currentPlayer.state == 1) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    if ((currentPlayer.position + diceRoll) > 20) {
+                    if ((currentPlayer.position + diceRoll) >= BOARD_SIZE) {
                         currentPlayer.bonus = 1;
                     }
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
-                    System.out.println(currentPlayer.name + " moved to square " + currentPlayer.position);
+                    System.out.println(currentPlayer.name + " moved to square " + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
                 }
 
                 currentPlayer.state = 1;
@@ -174,7 +179,6 @@ public class MonopolyGame {
                 } else {
                     handleProperty(currentPlayer);
                 }
-
                 turnEnd = true;
             }
 
@@ -207,9 +211,15 @@ public class MonopolyGame {
         }
 
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+
+        if (currentPlayerIndex == 0) {
+            round++; // Increment the round number after all players have taken their turn
+        }
+
         System.out.println("<-- Enter to continue -->");
         scanner.nextLine();
     }
+
 
     private void queryNextPlayer() {
         int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -251,7 +261,7 @@ public class MonopolyGame {
             for (Property property : player.getOwnedProperties()) {
                 System.out.println(property.name + " (Price: $" + property.price + ", Rent: $" + property.rent + ")");
             }
-            System.out.println(); // Add a blank line 
+            System.out.println(); // Add a blank line
         }
     }
 
@@ -325,36 +335,36 @@ public class MonopolyGame {
     private void handleIncomeTax(Player player) {
         Property property = properties[player.position];
         player.money -= 10 * (player.money / 100);
-        // System.out.println("Now you are in the" + player.position);
+        System.out.println("You need to pay 10% income tax!");
         System.out.println("Your money becomes " + player.money);
     }
 
     private void handleProperty(Player player) {
-        if (player.position < properties.length) {
-            Property property = properties[player.position - 1];
-            if (!property.owned) {
-                System.out.println("You landed on " + property.name + ". Price: " + property.price);
-                if (player.money >= property.price) {
-                    System.out.println("Do you want to buy it? (yes/no)");
-                    Scanner scanner = new Scanner(System.in);
-                    String input = scanner.nextLine();
-                    if (input.equalsIgnoreCase("yes")) {
-                        player.money -= property.price;
-                        property.owned = true;
-                        property.owner = player;
-                        player.addProperty(property); 
-                        System.out.println("You bought " + property.name + ". Remaining money: " + player.money);
-                    }
-                } else {
-                    System.out.println("Not enough money to buy this property.");
+        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE;
+        Property property = properties[Position];
+        if (!property.owned) {
+            System.out.println("You landed on " + property.name + ". Price: " + property.price);
+            if (player.money >= property.price) {
+                System.out.println("Do you want to buy it? (yes/no)");
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.nextLine();
+                if (input.equalsIgnoreCase("yes")) {
+                    player.money -= property.price;
+                    property.owned = true;
+                    property.owner = player;
+                    player.addProperty(property);
+                    System.out.println("You bought " + property.name + ". Remaining money: " + player.money);
                 }
             } else {
-                System.out.println("Property " + property.name + " is owned. Pay rent: " + property.rent);
-                player.money -= property.rent;
-                System.out.println("Remaining money: " + player.money);
+                System.out.println("Not enough money to buy this property.");
             }
+        } else {
+            System.out.println("Property " + property.name + " is owned. Pay rent: " + property.rent);
+            player.money -= property.rent;
+            System.out.println("Remaining money: " + player.money);
         }
     }
+
 
     private void handleGo(Player player) {
         if (player.state == 1) {
@@ -505,7 +515,7 @@ public class MonopolyGame {
 
             if (count >= 2 && count <= 6) {
                 System.out.println("Game start");
-                for (int round = 0; round < 5; round++) {
+                for (int round = 0; round < 99; round++) {
                     for (int i = 0; i < game.players.size(); i++) {
                         Player currentPlayer = players.get(currentPlayerIndex);
                         if (currentPlayer.money < 0) {
