@@ -340,7 +340,7 @@ public class MonopolyGame {
     }
 
     private void handleProperty(Player player) {
-        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE;
+        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE; //solve out of bound problem
         Property property = properties[Position];
         if (!property.owned) {
             System.out.println("You landed on " + property.name + ". Price: " + property.price);
