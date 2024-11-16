@@ -1,0 +1,40 @@
+Powder's turn.
+
+// Player have to pay rent for their own property XDDDDD
+
+// When Vi pay the rent of Powder property, both Vi and Powder's money pay rent
+Powder has $545
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Property Tsing Yi is owned. Pay rent: 15
+Remaining money: 530
+<-- Enter to continue -->
+
+Round 15
+Vi's turn.
+Vi has $75
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+
+1
+Invalid option. Please try again.
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      Property Tsing Yi is owned. Pay rent: 15
+Remaining money: 60
+<-- Enter to continue -->
+
+
+Powder's turn.
+Powder has $530
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game

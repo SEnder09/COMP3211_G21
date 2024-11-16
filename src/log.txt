@@ -1,0 +1,251 @@
+/Users/yimshanliu/Library/Java/JavaVirtualMachines/semeru-17.0.9-1/Contents/Home/bin/java -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=58776:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -classpath /Users/yimshanliu/Downloads/COMP3211_G21-main/out/production/G21_001 MonopolyGame
+Hi, Welcome to Monopoly Game!
+1. Start a new game
+2. Continue progress from last play
+1
+Do you want to play on the existing gameboard or design a new gameboard? (existing/new)
+1
+1. Enter your name
+2. Generate a random name
+1
+Please enter your name:
+Vi
+1. Add more players
+2. Finish entering names, start the game
+1
+1. Enter your name
+2. Generate a random name
+1
+Please enter your name:
+Powder
+1. Add more players
+2. Finish entering names, start the game
+2
+Game start
+Round 1
+Vi's turn.
+Vi has $1500
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Vi rolled a 5
+Vi moved to square 5
+You landed on Stanley. Price: 600
+Do you want to buy it? (yes/no)
+yes
+You bought Stanley. Remaining money: 900
+<-- Enter to continue -->
+
+Powder's turn.
+Powder has $1500
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 2
+Powder moved to square 2
+You landed on Central. Price: 800
+Do you want to buy it? (yes/no)
+yes
+You bought Central. Remaining money: 700
+<-- Enter to continue -->
+
+Round 2
+Vi's turn.
+Vi has $900
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Vi rolled a 7
+Vi moved to square 12
+You landed on Shatin. Price: 700
+Do you want to buy it? (yes/no)
+yes
+You bought Shatin. Remaining money: 200
+<-- Enter to continue -->
+
+Powder's turn.
+Powder has $700
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 6
+Powder moved to square 8
+You landed on Mong Kok. Price: 500
+Do you want to buy it? (yes/no)
+yes
+You bought Mong Kok. Remaining money: 200
+<-- Enter to continue -->
+
+Round 3
+Vi's turn.
+Vi has $200
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Vi rolled a 4
+Vi moved to square 16
+Vi currently landed on [Go to jail]
+Vi is sent to jail
+<-- Enter to continue -->
+
+Powder's turn.
+Powder has $200
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 6
+Powder moved to square 14
+You landed on Tuen Mun. Price: 400
+Not enough money to buy this property.
+<-- Enter to continue -->
+
+Round 4
+Vi's turn.
+Vi has $200
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+First dice Vi rolled is 2
+Second dice Vi rolled is 4
+Do you want to pay fine? (yes/no)
+Remaining money of Vi is 200
+yes
+First dice Vi rolled is 2
+Second dice Vi rolled is 4
+<-- Enter to continue -->
+
+Powder's turn.
+Powder has $200
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 5
+Powder moved to square 19
+Now you land on chance!
+You lost HKD: -30
+Total money: 170
+<-- Enter to continue -->
+
+Round 5
+Vi's turn.
+Vi has $50
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Vi rolled a 4
+Vi moved to square 16
+Vi currently landed on [Go to jail]
+Vi is sent to jail
+<-- Enter to continue -->
+
+Powder's turn.
+Powder has $170
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 5
+Powder moved to square 4
+You need to pay 10% income tax!
+Your money becomes 160
+<-- Enter to continue -->
+
+Round 6
+Vi's turn.
+Vi has $50
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+First dice Vi rolled is 4
+Second dice Vi rolled is 3
+Do you want to pay fine? (yes/no)
+Remaining money of Vi is 50
+yes
+First dice Vi rolled is 4
+Second dice Vi rolled is 3
+First dice Vi rolled is 1
+Second dice Vi rolled is 4
+You don't have enough money to pay fine, you are broke!
+First dice Vi rolled is 1
+Second dice Vi rolled is 4
+<-- Enter to continue -->
+
+
+Powder's turn.
+Powder has $160
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 4
+Powder moved to square 8
+Property Mong Kok is owned. Pay rent: 40
+Remaining money: 120
+<-- Enter to continue -->
+
+Round 7
+Vi's turn.
+Vi has $50
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+
+1
+Invalid option. Please try again.
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      First dice Vi rolled is 4
+Second dice Vi rolled is 4
+Vi successfully roll a doubles.
+Vi released from jail now.
+<-- Enter to continue -->
+1
+Powder's turn.
+Powder has $120
+1. Roll dice                        2. Save game
+3. View players' status             4. View all players' status
+5. View game status                 6. Query next player?
+7. Quit game
+                      1
+Powder rolled a 7
+Powder moved to square 15
+You landed on Tai Po. Price: 500
+Not enough money to buy this property.
+<-- Enter to continue -->
+JVMDUMP039I 正在处理转储事件“user”，详细信息“”，位于 2024/11/17 01:20:45 - 请稍候。
+JVMDUMP032I JVM 使用“/Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012045.45571.0001.txt”来请求 Java 转储以响应事件
+JVMDUMP010I Java 转储已写入 /Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012045.45571.0001.txt
+JVMDUMP013I 已处理转储事件“user”，详细信息：“”。
+JVMDUMP039I 正在处理转储事件“user”，详细信息“”，位于 2024/11/17 01:20:47 - 请稍候。
+JVMDUMP032I JVM 使用“/Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012047.45571.0002.txt”来请求 Java 转储以响应事件
+JVMDUMP010I Java 转储已写入 /Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012047.45571.0002.txt
+JVMDUMP013I 已处理转储事件“user”，详细信息：“”。
+JVMDUMP039I 正在处理转储事件“user”，详细信息“”，位于 2024/11/17 01:20:54 - 请稍候。
+JVMDUMP032I JVM 使用“/Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012054.45571.0003.txt”来请求 Java 转储以响应事件
+JVMDUMP010I Java 转储已写入 /Users/yimshanliu/Downloads/COMP3211_G21-main/javacore.20241117.012054.45571.0003.txt
+JVMDUMP013I 已处理转储事件“user”，详细信息：“”。
