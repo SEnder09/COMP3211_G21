@@ -373,7 +373,11 @@ public class MonopolyGame {
             } else {
                 System.out.println("Not enough money to buy this property.");
             }
-        } else {
+        }
+        else if(property.owned == true && property.owner == player) {
+            System.out.println("You landed on your own place " + property.name);
+        }
+        else {
             System.out.println("Property " + property.name + " is owned. Pay rent: " + property.rent);
             player.money -= property.rent;
             System.out.println("Remaining money: " + player.money);
