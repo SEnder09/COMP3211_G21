@@ -145,7 +145,7 @@ public class MonopolyGame {
                 DiceResult result = rollDice();
                 int diceRoll = result.getSum();
                 currentPlayer.bonus = 0;
-
+                // test
                 if (!currentPlayer.inJail && currentPlayer.state == 0) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
