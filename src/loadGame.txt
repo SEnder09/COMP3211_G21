@@ -1,0 +1,71 @@
+public void loadGame() {
+        String fileName = "monopoly_game_state.csv";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            // Read the header
+            String header = reader.readLine(); // Read and ignore the header line
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by commas
+                String[] playerData = line.split(",");
+
+                // Ensure that there are enough columns in playerData
+                if (playerData.length < 5) {
+                    System.out.println("Invalid data format for player: " + line);
+                    continue; // Skip this line if it doesn't have enough data
+                }
+
+                // Extract player information
+                String playerName = playerData[0].trim();
+                int playerMoney = Integer.parseInt(playerData[1].trim());
+                int playerPosition = Integer.parseInt(playerData[2].trim());
+                boolean inJail = Boolean.parseBoolean(playerData[3].trim());
+
+                // Create a new Player object
+                Player player = new Player(playerName);
+                player.addMoney(playerMoney - player.getMoney()); // Adjust the player's money
+                player.setPosition(playerPosition);
+                player.inJail = inJail;
+
+                // Process owned properties
+                String ownedPropertiesData = playerData[4].trim();
+                if (!ownedPropertiesData.equals("None")) {
+                    // Split the owned properties by the delimiter ") ("
+                    String[] propertiesData = ownedPropertiesData.split("\\) \\(");
+                    for (String propertyData : propertiesData) {
+                        // Clean up the property data
+                        propertyData = propertyData.replace(")", "").trim(); // Remove trailing ')'
+                        String[] parts = propertyData.split(" Price: \\$");
+
+                        if (parts.length == 2) {
+                            String propertyName = parts[0].trim(); // Get the property name
+                            String[] rentParts = parts[1].split("\\*Rent: \\$");
+
+                            if (rentParts.length == 2) {
+                                int propertyPrice = Integer.parseInt(rentParts[0].trim());
+                                int propertyRent = Integer.parseInt(rentParts[1].trim());
+
+                                // Create a Property object and add it to the player
+                                Property property = new Property(propertyName, propertyPrice, propertyRent);
+                                player.addProperty(property); // Assuming Player has a method to add properties
+                            } else {
+                                System.out.println("Invalid rent format: " + propertyData);
+                            }
+                        } else {
+                            System.out.println("Invalid property format: " + propertyData);
+                        }
+                    }
+                }
+
+                // Add the player to the game
+                players.add(player); // Assuming players is a List<Player>
+            }
+
+            System.out.println("Game loaded successfully from " + fileName);
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading the game: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing number in game state: " + e.getMessage());
+        }
+    }
