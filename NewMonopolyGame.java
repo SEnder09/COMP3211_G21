@@ -1,9 +1,10 @@
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 // need to add a check condition to check if there are >=2 && <=6 players
 
@@ -75,6 +76,7 @@ class Player {
     public void addProperty(Property property) {
         ownedProperties.add(property);
     }
+
 }
 
 
@@ -95,7 +97,7 @@ public class MonopolyGame {
                 new Property("Income tax", 0, 0), // 3
                 new Property("Stanley", 600, 60), // 4
                 new Property("Just Visiting/In Jail", 0, 0), // 5
-                new Property("Shek O", 400, 10), //6
+                new Property("Shek O", 400, 10), // 6
                 new Property("Mong Kok", 500, 40), // 7
                 new Property("Chance", 0, 0), // 8
                 new Property("Tsing Yi", 400, 15), // 9
@@ -137,9 +139,12 @@ public class MonopolyGame {
         boolean turnEnd = false;
 
         while (!turnEnd) {
-            System.out.println("1. Roll dice or 2. Save game or 3. View player status or 4. View all players' status or 5. View game status or 6. Query next player? (1/2/3/4/5/6)");
+            // Display formatted player option
+            System.out.printf("%-35s %-35s%n%-35s %-35s%n%-35s %-35s%n%-35s", "1. Roll dice" , "2. Save game", "3. View players' status" , "4. View all players' status", "5. View game status" , "6. Query next player?", "7. Quit game\n");
+            //System.out.println("1. Roll dice 2. Save game \n3. View player status \n4. View all players' status \n5. View game status \n6. Query next player?\n7. Quit game\n (1/2/3/4/5/6/7)");
             String input = scanner.nextLine();
 
+            // 1. Roll dice
             if (input.equalsIgnoreCase("1")) {
                 DiceResult result = rollDice();
                 int diceRoll = result.getSum();
@@ -147,13 +152,13 @@ public class MonopolyGame {
 
                 if (!currentPlayer.inJail && currentPlayer.state == 0) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
+                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
                     System.out.println(currentPlayer.name + " moved to square " + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
                 }
 
                 if (!currentPlayer.inJail && currentPlayer.state == 1) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    if ((currentPlayer.position + diceRoll) >= BOARD_SIZE) {
+                    if ((currentPlayer.position + diceRoll) > BOARD_SIZE) {
                         currentPlayer.bonus = 1;
                     }
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
@@ -161,14 +166,22 @@ public class MonopolyGame {
                 }
 
                 currentPlayer.state = 1;
-                Property property = properties[currentPlayer.position];
+                //Property property = properties[currentPlayer.position - 1];
+                Property property = properties[(currentPlayer.position - 1 + BOARD_SIZE) % BOARD_SIZE];
 
-                if (currentPlayer.state == 1 && currentPlayer.bonus == 1) {
+                if (currentPlayer.bonus == 1) {
+                    handleGo(currentPlayer);
+                    currentPlayer.bonus = 0;
+                }
+                if(currentPlayer.position == 1  && currentPlayer.bonus == 1){
                     handleGo(currentPlayer);
                 }
-                if (currentPlayer.position == 4) {
+                else if (currentPlayer.position == 4) {
                     handleIncomeTax(currentPlayer);
                 } else if (currentPlayer.position == 6) {
+                    if(!currentPlayer.inJail){
+                        System.out.println(currentPlayer.name + " landed on " + property.name);
+                    }
                     handleJustVisiting(currentPlayer);
                 } else if (currentPlayer.position == 9 || currentPlayer.position == 13 || currentPlayer.position == 19) {
                     handleChance(currentPlayer);
@@ -181,6 +194,8 @@ public class MonopolyGame {
                 }
                 turnEnd = true;
             }
+
+            // save game
 
             if (input.equalsIgnoreCase("2")) {
                 saveGame();
@@ -203,6 +218,11 @@ public class MonopolyGame {
 
             if (input.equalsIgnoreCase("6")) {
                 queryNextPlayer();
+            }
+
+            if(input.equalsIgnoreCase("7")) {
+                System.out.println("You quit the game.");
+                System.exit(0);
             }
 
             if (!input.equalsIgnoreCase("1") && !input.equalsIgnoreCase("2") && !input.equalsIgnoreCase("3") && !input.equalsIgnoreCase("4") && !input.equalsIgnoreCase("5") && !input.equalsIgnoreCase("6")) {
@@ -239,7 +259,7 @@ public class MonopolyGame {
         System.out.println("Board:");
         for (int i = 0; i < properties.length; i++) {
             Property property = properties[i];
-            System.out.print("Square " + i + ": " + property.name);
+            System.out.print("Square " + (i + 1) + ": " + property.name); // Adjusted to display square number starting from 1
             if (property.owned) {
                 System.out.print(" (Owned by " + property.owner.getName() + ")");
             }
@@ -247,7 +267,7 @@ public class MonopolyGame {
         }
         System.out.println("\nPlayers' Positions:");
         for (Player player : players) {
-            System.out.println(player.getName() + " is on square " + player.getPosition());
+            System.out.println(player.getName() + " is on square " + (player.getPosition() + 1)); 
         }
     }
 
@@ -340,8 +360,13 @@ public class MonopolyGame {
     }
 
     private void handleProperty(Player player) {
-        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE; //solve out of bound problem 
+        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE; //solve out of bound problem
         Property property = properties[Position];
+
+        if (Position == 0) {
+            return; // Exit the method so Go will not be treated as property
+        }
+
         if (!property.owned) {
             System.out.println("You landed on " + property.name + ". Price: " + property.price);
             if (player.money >= property.price) {
@@ -358,7 +383,11 @@ public class MonopolyGame {
             } else {
                 System.out.println("Not enough money to buy this property.");
             }
-        } else {
+        }
+        else if(property.owned == true && property.owner == player) {
+            System.out.println("You landed on your own place " + property.name);
+        }
+        else {
             System.out.println("Property " + property.name + " is owned. Pay rent: " + property.rent);
             player.money -= property.rent;
             System.out.println("Remaining money: " + player.money);
@@ -394,22 +423,23 @@ public class MonopolyGame {
 
     private void handleJustVisiting(Player player) { // Also the state of in jail
         int diceCount = 0;
-        while (player.inJail && !(diceCount >= 3)) { // need to get the value of two dice
+        while (player.inJail && diceCount < 3) { // need to get the value of two dice
             DiceResult result = rollDice(); // Call the rollDice method
             int dice1 = result.getDice1();
             int dice2 = result.getDice2();
             int sum = dice1 + dice2; // Get the sum of the dice
             boolean sameDice = result.isSameDice(); // Get the boolean result
-            System.out.println("First dice " + player.name + " rolled is " + dice1);
-            System.out.println("Second dice " + player.name + " rolled is " + dice2);
+
             if (sameDice) { // player rolled same dice, get out of Jail
-                System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " gets out of jail now.");
+                System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " released from jail now.");
                 int position = (player.position + sum) % BOARD_SIZE;
                 player.setPosition(position); // Move player to the position of adding the dice they roll
                 break;
             }
             diceCount++;
             if (diceCount == 1) {
+                System.out.println("First dice " + player.name + " rolled is " + dice1);
+                System.out.println("Second dice " + player.name + " rolled is " + dice2);
                 System.out.println("Do you want to pay fine? (yes/no)");
                 System.out.println("Remaining money of " + player.name + " is " + player.money);
                 Scanner scanner = new Scanner(System.in);
@@ -419,6 +449,9 @@ public class MonopolyGame {
                     player.inJail = false;
                     player.setPosition(player.position + dice1 + dice2);
                 }
+            } else if(diceCount == 2 ){
+                System.out.println("First dice " + player.name + " rolled is " + dice1);
+                System.out.println("Second dice " + player.name + " rolled is " + dice2);
             } else if (diceCount < 3) { // not pay fine, go to next round to roll dice
                 if (dice1 == dice2) {
                     player.inJail = false;
@@ -427,14 +460,18 @@ public class MonopolyGame {
             } else if (diceCount == 3) {
                 if (player.money > 150) {
                     player.money -= 150;
+                    System.out.println("You are required to pay a $150 fine to be released from jail now.");
+                    player.inJail = false;
+                    player.setPosition(player.position + dice1 + dice2);
                 } else {
+                    player.money -= 150;
                     System.out.println("You don't have enough money to pay fine, you are broke!");
                     removePlayer(player.name);
                 }
             }
 
-            System.out.println("First dice " + player.name + " rolled is " + dice1);
-            System.out.println("Second dice " + player.name + " rolled is " + dice2);
+/*            System.out.println("First dice " + player.name + " rolled is " + dice1);
+            System.out.println("Second dice " + player.name + " rolled is " + dice2);*/
             diceCount++;
 /*            if(dice1 == dice2){
                 player.inJail = false;
@@ -458,9 +495,46 @@ public class MonopolyGame {
         player.inJail = true; // the handle just visiting
         // System.out.println("Player currently landed on: ");
     }
+    // data required to store?
+    // round, player info, property info
 
     public void saveGame() {
-        //code
+        String fileName = "monopoly_game_state.csv";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            // Write header
+            writer.write("Player Name,Money,Position,In Jail,Owned Properties");
+            writer.newLine();
+
+            // Write player data
+            for (Player player : players) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(player.getName()).append(",")
+                        .append(player.getMoney()).append(",")
+                        .append(player.getPosition()).append(",")
+                        .append(player.inJail).append(",");
+
+                // Append owned properties
+                List<Property> ownedProperties = player.getOwnedProperties();
+                if (ownedProperties.isEmpty()) {
+                    sb.append("None");
+                } else {
+                    for (Property property : ownedProperties) {
+                        sb.append(property.name).append(" (Price: $").append(property.price)
+                                .append(", Rent: $").append(property.rent).append("), ");
+                    }
+                    // Remove the trailing comma and space
+                    sb.setLength(sb.length() - 2);
+                }
+
+                writer.write(sb.toString());
+                writer.newLine();
+            }
+
+            System.out.println("Game saved successfully to " + fileName);
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the game: " + e.getMessage());
+        }
     }
 
 
@@ -518,10 +592,16 @@ public class MonopolyGame {
                 for (int round = 0; round < 99; round++) {
                     for (int i = 0; i < game.players.size(); i++) {
                         Player currentPlayer = players.get(currentPlayerIndex);
-                        if (currentPlayer.money < 0) {
-                            System.out.println("Sorry, You go bankrupt.");
+                        if (currentPlayer.money <= 0) {
+                            // System.out.println("Sorry, You go bankrupt.");
                             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+
                             removePlayer(currentPlayer.name);
+                        }
+                        if(players.size() <= 1){
+                            Player cPlayer = players.get(currentPlayerIndex);
+                            System.out.println(cPlayer.name + " win!");
+                            System.exit(0);
                         }
                         game.playTurn();
                     }
