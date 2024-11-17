@@ -152,13 +152,13 @@ public class MonopolyGame {
 
                 if (!currentPlayer.inJail && currentPlayer.state == 0) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
+                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
                     System.out.println(currentPlayer.name + " moved to square " + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
                 }
 
                 if (!currentPlayer.inJail && currentPlayer.state == 1) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    if ((currentPlayer.position + diceRoll) >= BOARD_SIZE) {
+                    if ((currentPlayer.position + diceRoll) > BOARD_SIZE) {
                         currentPlayer.bonus = 1;
                     }
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
@@ -166,12 +166,16 @@ public class MonopolyGame {
                 }
 
                 currentPlayer.state = 1;
-                Property property = properties[currentPlayer.position];
+                Property property = properties[currentPlayer.position - 1];
 
-                if (currentPlayer.position == 1 && currentPlayer.state == 1 && currentPlayer.bonus == 1) {
+                if (currentPlayer.bonus == 1) {
+                    handleGo(currentPlayer);
+                    currentPlayer.bonus = 0;
+                }
+                if(currentPlayer.position == 1  && currentPlayer.bonus == 1){
                     handleGo(currentPlayer);
                 }
-                if (currentPlayer.position == 4) {
+                else if (currentPlayer.position == 4) {
                     handleIncomeTax(currentPlayer);
                 } else if (currentPlayer.position == 6) {
                     if(!currentPlayer.inJail){
