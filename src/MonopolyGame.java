@@ -154,7 +154,7 @@ public class MonopolyGame {
 
                 if (!currentPlayer.inJail && currentPlayer.state == 1) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    if ((currentPlayer.position + diceRoll) >= BOARD_SIZE) {
+                    if ((currentPlayer.position + diceRoll) > BOARD_SIZE) {
                         currentPlayer.bonus = 1;
                     }
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
@@ -162,12 +162,16 @@ public class MonopolyGame {
                 }
 
                 currentPlayer.state = 1;
-                Property property = properties[currentPlayer.position];
+                Property property = properties[currentPlayer.position - 1];
 
-                if (currentPlayer.position == 1 && currentPlayer.state == 1 && currentPlayer.bonus == 1) {
+                if (currentPlayer.bonus == 1) {
+                    handleGo(currentPlayer);
+                    currentPlayer.bonus = 0;
+                }
+                if(currentPlayer.position == 1  && currentPlayer.bonus == 1){
                     handleGo(currentPlayer);
                 }
-                if (currentPlayer.position == 4) {
+                else if (currentPlayer.position == 4) {
                     handleIncomeTax(currentPlayer);
                 } else if (currentPlayer.position == 6) {
                     if(!currentPlayer.inJail){
@@ -369,7 +373,11 @@ public class MonopolyGame {
             } else {
                 System.out.println("Not enough money to buy this property.");
             }
-        } else {
+        }
+        else if(property.owned == true && property.owner == player) {
+            System.out.println("You landed on your own place " + property.name);
+        }
+        else {
             System.out.println("Property " + property.name + " is owned. Pay rent: " + property.rent);
             player.money -= property.rent;
             System.out.println("Remaining money: " + player.money);
