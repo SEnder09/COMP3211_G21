@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.*;
+import java.util.*;
 
 // need to add a check condition to check if there are >=2 && <=6 players
 
@@ -517,8 +519,8 @@ public class MonopolyGame {
                     sb.append("None");
                 } else {
                     for (Property property : ownedProperties) {
-                        sb.append(property.name).append(" (Price: $").append(property.price)
-                                .append(", Rent: $").append(property.rent).append("), ");
+                        sb.append(property.name).append(" Price: $").append(property.price)
+                                .append("*Rent: $").append(property.rent).append(") (");
                     }
                     // Remove the trailing comma and space
                     sb.setLength(sb.length() - 2);
@@ -536,7 +538,44 @@ public class MonopolyGame {
 
 
     public void loadGame() {
-        //code
+        String fileName = "monopoly_game_state.csv";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String header = reader.readLine(); // Read and ignore the header line
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] playerData = line.split(",");
+
+                if (playerData.length < 5) {
+                    System.out.println("Invalid data format for player: " + line);
+                    continue; // Skip invalid lines
+                }
+
+                String playerName = playerData[0].trim();
+                int playerMoney = Integer.parseInt(playerData[1].trim());
+                int playerPosition = Integer.parseInt(playerData[2].trim());
+                boolean inJail = Boolean.parseBoolean(playerData[3].trim());
+
+                // Add player to the game using the addPlayer method
+                addPlayer(playerName); // Add the player using the method
+
+                // Initialize the player properties
+                Player player = players.get(players.size() - 1); // Get the last added player
+                player.addMoney(playerMoney - player.getMoney()); // Adjust the player's money
+                player.setPosition(playerPosition);
+                player.inJail = inJail;
+
+                // Process owned properties as before...
+                // (Keep the owned properties loading logic here)
+            }
+
+            System.out.println("Game loaded successfully from " + fileName);
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading the game: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing number in game state: " + e.getMessage());
+        }
     }
 
     public void modifyGameBoard(int SquareNumber, String name, int price, int rent) {
