@@ -259,7 +259,7 @@ public class MonopolyGame {
         System.out.println("Board:");
         for (int i = 0; i < properties.length; i++) {
             Property property = properties[i];
-            System.out.print("Square " + (i + 1) + ": " + property.name); // Adjusted to display square number starting from 1
+            System.out.print("Square " + (i + 1) + ": " + property.name); // Display square number
             if (property.owned) {
                 System.out.print(" (Owned by " + property.owner.getName() + ")");
             }
@@ -267,7 +267,7 @@ public class MonopolyGame {
         }
         System.out.println("\nPlayers' Positions:");
         for (Player player : players) {
-            System.out.println(player.getName() + " is on square " + (player.getPosition() + 1)); 
+            System.out.println(player.getName() + " is on square " + player.getPosition()); // Display player's position
         }
     }
 
