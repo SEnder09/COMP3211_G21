@@ -148,7 +148,7 @@ public class MonopolyGame {
 
                 if (!currentPlayer.inJail && currentPlayer.state == 0) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
-                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
+                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
                     System.out.println(currentPlayer.name + " moved to square " + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
                 }
 
