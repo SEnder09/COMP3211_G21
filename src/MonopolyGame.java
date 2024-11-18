@@ -260,15 +260,18 @@ public class MonopolyGame {
         System.out.println("Board:");
         for (int i = 0; i < properties.length; i++) {
             Property property = properties[i];
-            System.out.print("Square " + (i + 1) + ": " + property.name); // Display square number
-            if (property.owned) {
-                System.out.print(" (Owned by " + property.owner.getName() + ")");
+            System.out.print("Square " + (i + 1) + ": " + property.name);
+            if (property.price > 0) {
+                System.out.print(" (Price: " + property.price + ", Rent: " + property.rent + ")");
+                if (property.owned) {
+                    System.out.print(" (Owned by " + property.owner.getName() + ")");
+                }
             }
             System.out.println();
         }
         System.out.println("\nPlayers' Positions:");
         for (Player player : players) {
-            System.out.println(player.getName() + " is on square " + player.getPosition()); // Display player's position
+            System.out.println(player.getName() + " is on square " + player.getPosition());
         }
     }
 
@@ -588,76 +591,117 @@ public class MonopolyGame {
     private void designNewGameboard() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("1. Load the gameboard you created before\n2. Create new gameboard");
-        String choice = scanner.nextLine();
+        // Display the current gameboard
+        System.out.println("Existing Gameboard:");
+        for (int i = 0; i < properties.length; i++) {
+            Property property = properties[i];
+            System.out.print("Square " + (i + 1) + ": " + property.name);
+            if (property.price > 0) {
+                System.out.print(" (Price: " + property.price + ", Rent: " + property.rent + ")");
+            }
+            System.out.println();
+        }
 
-        if (choice.equals("1")) {
-            loadGameBoard();
-            System.out.println("Existing gameboard loaded successfully.");
-        } else if (choice.equals("2")) {
-
-            // Display the current gameboard
-            System.out.println("Current Gameboard:");
-            for (int i = 0; i < properties.length; i++) {
-                Property property = properties[i];
-                System.out.print("Square " + (i + 1) + ": " + property.name);
-                System.out.println(" (Price: " + property.price + ", Rent: " + property.rent + ")");
+        while (true) {
+            System.out.println("Enter the square number of the property to modify (1-20):");
+            int n;
+            try {
+                n = Integer.parseInt(scanner.nextLine()) - 1;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid property index. Please try again.");
+                continue;
             }
 
-            while (true) {
-                System.out.println("Enter the square number of the property to modify (1-20):");
-                int n;
-                try {
-                    n = Integer.parseInt(scanner.nextLine()) - 1;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid property index. Please try again.");
-                    continue;
-                }
+            if (n >= 0 && n < properties.length && properties[n].price > 0) {
+                System.out.println("Enter the new name of the property:");
+                String name = scanner.nextLine();
 
-                if (n >= 0 && n < properties.length && properties[n].price > 0) {
-                    System.out.println("Enter the new name of the property:");
-                    String name = scanner.nextLine();
+                System.out.println("Enter the new price of the property:");
+                int price = Integer.parseInt(scanner.nextLine());
 
-                    System.out.println("Enter the new price of the property:");
-                    int price = Integer.parseInt(scanner.nextLine());
+                System.out.println("Enter the new rent of the property:");
+                int rent = Integer.parseInt(scanner.nextLine());
 
-                    System.out.println("Enter the new rent of the property:");
-                    int rent = Integer.parseInt(scanner.nextLine());
+                modifyGameBoard(n, name, price, rent);
 
-                    modifyGameBoard(n, name, price, rent);
+                System.out.println("Property modified successfully.");
+            } else {
+                System.out.println("This is not a property square. Please enter again.");
+                continue;
+            }
 
-                    System.out.println("Property modified successfully.");
-                } else {
-                    System.out.println("This is not a property square. Please enter again.");
-                    continue;
-                }
+            System.out.println("1. modify another property square\n2. save the gameboard\n3. start playing on your designed gameboard\n(Enter 1/2/3)");
+            String nextAction = scanner.nextLine();
 
-                System.out.println("1. modify another property square\n2. save the gameboard\n3. start playing on your designed gameboard\n(Enter 1/2/3)");
-                String nextAction = scanner.nextLine();
+            if (nextAction.equalsIgnoreCase("2")) {
+                saveGameBoard();
 
-                if (nextAction.equalsIgnoreCase("2")) {
-                    saveGameBoard();
+                System.out.println("1. Exit\n2. start playing on your designed gameboard\n(Enter 1/2)");
+                String Choice = scanner.nextLine();
 
-                } else if (nextAction.equalsIgnoreCase("3")) {
+                if (Choice.equalsIgnoreCase("1")) {
+                    System.exit(0); // Exit the program
+
+                } else if (Choice.equalsIgnoreCase("2") || nextAction.equalsIgnoreCase("3")) {
                     System.out.println("Starting the game with the modified gameboard...");
                     System.out.println();
-                    break;
+                    break; // Exit the loop to start the game
                 }
             }
         }
     }
 
-    private void loadGameBoard() {
-    }
-
     private void saveGameBoard() {
-        try (FileWriter writer = new FileWriter("gameboard.csv")) {
+        String fileName = "gameboard.csv";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("Square name, Price, Rent");
+            writer.newLine();
             for (Property property : properties) {
                 writer.write(property.name + "," + property.price + "," + property.rent + "\n");
             }
             System.out.println("Gameboard saved successfully.");
         } catch (IOException e) {
             System.out.println("An error occurred while saving the gameboard.");
+        }
+    }
+
+    private void loadGameBoard() {
+        String fileName = "gameboard.csv";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            int index = 0;
+
+            // Skip the header line
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String name = parts[0];
+                    int price = Integer.parseInt(parts[1].trim());
+                    int rent = Integer.parseInt(parts[2].trim());
+                    properties[index] = new Property(name, price, rent);
+                    index++;
+                }
+            }
+            System.out.println("Gameboard loaded successfully.");
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Do you want to modify the loaded gameboard or start playing on it?");
+            System.out.println("1. Modify the gameboard\n2. Start playing");
+            String choice = scanner.nextLine();
+
+            if (choice.equals("1")) {
+                designNewGameboard();
+            } else if (choice.equals("2")) {
+                System.out.println("Starting the game with the loaded gameboard...");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading the gameboard.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid data format in the gameboard file.");
         }
     }
 
@@ -672,16 +716,23 @@ public class MonopolyGame {
         if (choice.equals("2")) {
             game.loadGame();
         } else {
-            System.out.println("Do you want to play on a existing gameboard or a custom gameboard? (existing/custom)");
+            System.out.println("Do you want to play on an existing gameboard or a custom gameboard? (existing/custom)");
             String boardChoice = scanner.nextLine();
 
             if (boardChoice.equalsIgnoreCase("custom")) {
-                game.designNewGameboard();
+                System.out.println("1. Load the gameboard you created before\n2. Create new gameboard");
+                String action = scanner.nextLine();
+
+                if (action.equals("1")) {
+                    game.loadGameBoard();
+                } else if (action.equals("2")) {
+                    game.designNewGameboard();
+                }
             }
 
+            List<Player> players = new ArrayList<>();
             String qinput = "1";
             int count = 0;
-            players = new ArrayList<>();
 
             while (qinput.equals("1")) {
                 System.out.println("1. Enter your name\n2. Generate a random name");
@@ -710,16 +761,15 @@ public class MonopolyGame {
                 System.out.println("Game start");
                 for (int round = 0; round < 99; round++) {
                     for (int i = 0; i < game.players.size(); i++) {
-                        Player currentPlayer = players.get(currentPlayerIndex);
+                        Player currentPlayer = game.players.get(game.currentPlayerIndex);
                         if (currentPlayer.money <= 0) {
                             // System.out.println("Sorry, You go bankrupt.");
-                            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-
-                            removePlayer(currentPlayer.name);
+                            game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
+                            game.removePlayer(currentPlayer.name);
                         }
-                        if (players.size() <= 1) {
-                            Player cPlayer = players.get(currentPlayerIndex);
-                            System.out.println(cPlayer.name + " win!");
+                        if (game.players.size() <= 1) {
+                            Player cPlayer = game.players.get(game.currentPlayerIndex);
+                            System.out.println(cPlayer.name + " wins!");
                             System.exit(0);
                         }
                         game.playTurn();
