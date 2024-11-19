@@ -742,7 +742,7 @@ public class MonopolyGame {
             if (choice.equals("1") || choice.equals("2")) {
                 if (choice.equals("2")) {
                     game.loadGame();
-                    return;
+                    break; // return change to break
                 }
                 break;
             } else {
@@ -782,7 +782,7 @@ public class MonopolyGame {
         int count = 0;
 
         while (qinput.equals("1")) {
-            System.out.println("1. Enter your name\n2. Generate a random name");
+            System.out.println("1. Enter your name\n2. Generate a random name\n3. Start the game");
             String input = scanner.nextLine();
             String name = null;
 
@@ -801,6 +801,8 @@ public class MonopolyGame {
                 game.addPlayer(randomName);
                 System.out.println("Your name is: " + randomName);
                 count++;
+            } else if(input.equals("3")){
+                break;
             } else {
                 System.out.println("Error input! Please enter 1 or 2.");
                 continue;
