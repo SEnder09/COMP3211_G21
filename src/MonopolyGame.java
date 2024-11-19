@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.*;
 import java.util.*;
 
+
 // need to add a check condition to check if there are >=2 && <=6 players
 
 // Lack of the implementation of Go, Chance, Income tax, Free Parking, Go to Jail
@@ -613,18 +614,34 @@ public class MonopolyGame {
             }
 
             if (n >= 0 && n < properties.length && properties[n].price > 0) {
-                System.out.println("Enter the new name of the property:");
-                String name = scanner.nextLine();
+                while (true) {
+                    System.out.println("Enter the new name of the property:");
+                    String name = scanner.nextLine();
 
-                System.out.println("Enter the new price of the property:");
-                int price = Integer.parseInt(scanner.nextLine());
+                    // Check if the property name already exists
+                    boolean propertyExists = false;
+                    for (Property property : properties) {
+                        if (property.name.equalsIgnoreCase(name)) {
+                            propertyExists = true;
+                            break;
+                        }
+                    }
 
-                System.out.println("Enter the new rent of the property:");
-                int rent = Integer.parseInt(scanner.nextLine());
+                    if (propertyExists) {
+                        System.out.println("This property already exists in the gameboard. Please enter another name.");
+                    } else {
+                        System.out.println("Enter the new price of the property:");
+                        int price = Integer.parseInt(scanner.nextLine());
 
-                modifyGameBoard(n, name, price, rent);
+                        System.out.println("Enter the new rent of the property:");
+                        int rent = Integer.parseInt(scanner.nextLine());
 
-                System.out.println("Property modified successfully.");
+                        modifyGameBoard(n, name, price, rent);
+
+                        System.out.println("Property modified successfully.");
+                        break;
+                    }
+                }
             } else {
                 System.out.println("This is not a property square. Please enter again.");
                 continue;
@@ -650,6 +667,7 @@ public class MonopolyGame {
             }
         }
     }
+
 
     private void saveGameBoard() {
         String fileName = "gameboard.csv";
@@ -689,19 +707,23 @@ public class MonopolyGame {
             System.out.println("Gameboard loaded successfully.");
 
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Do you want to modify the loaded gameboard or start playing on it?");
-            System.out.println("1. Modify the gameboard\n2. Start playing");
-            String choice = scanner.nextLine();
+            while (true) {
+                System.out.println("Do you want to modify the loaded gameboard or start playing on it?");
+                System.out.println("1. Modify the gameboard\n2. Start playing");
+                String choice = scanner.nextLine();
 
-            if (choice.equals("1")) {
-                designNewGameboard();
-            } else if (choice.equals("2")) {
-                System.out.println("Starting the game with the loaded gameboard...");
+                if (choice.equals("1")) {
+                    designNewGameboard();
+                    break;
+                } else if (choice.equals("2")) {
+                    System.out.println("Starting the game with the loaded gameboard...");
+                    break;
+                } else {
+                    System.out.println("Invalid choice. Please enter 1 or 2.");
+                }
             }
         } catch (IOException e) {
             System.out.println("An error occurred while loading the gameboard.");
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid data format in the gameboard file.");
         }
     }
 
@@ -710,77 +732,101 @@ public class MonopolyGame {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Hi, Welcome to Monopoly Game!");
-        System.out.println("1. Start a new game\n2. Continue progress from last play");
-        String choice = scanner.nextLine();
+        while (true) {
+            System.out.println("1. Start a new game\n2. Continue progress from last play");
+            String choice = scanner.nextLine();
 
-        if (choice.equals("2")) {
-            game.loadGame();
-        } else {
+            if (choice.equals("1") || choice.equals("2")) {
+                if (choice.equals("2")) {
+                    game.loadGame();
+                    return;
+                }
+                break;
+            } else {
+                System.out.println("Invalid choice. Please enter 1 or 2.");
+            }
+        }
+
+        while (true) {
             System.out.println("Do you want to play on an existing gameboard or a custom gameboard? (existing/custom)");
             String boardChoice = scanner.nextLine();
 
-            if (boardChoice.equalsIgnoreCase("custom")) {
-                System.out.println("1. Load the gameboard you created before\n2. Create new gameboard");
-                String action = scanner.nextLine();
+            if (boardChoice.equalsIgnoreCase("existing")) {
+                break;
+            } else if (boardChoice.equalsIgnoreCase("custom")) {
+                while (true) {
+                    System.out.println("1. Load the gameboard you created before\n2. Create new gameboard");
+                    String action = scanner.nextLine();
 
-                if (action.equals("1")) {
-                    game.loadGameBoard();
-                } else if (action.equals("2")) {
-                    game.designNewGameboard();
-                }
-            }
-
-            List<Player> players = new ArrayList<>();
-            String qinput = "1";
-            int count = 0;
-
-            while (qinput.equals("1")) {
-                System.out.println("1. Enter your name\n2. Generate a random name");
-                String input = scanner.nextLine();
-                String name = null;
-
-                if (input.equals("1")) {
-                    System.out.println("Please enter your name: ");
-                    name = scanner.nextLine();
-                    game.addPlayer(name);
-                    count++;
-                } else if (input.equals("2")) {
-                    String randomName = RandomNameGenerator.generateRandomName();
-                    game.addPlayer(randomName);
-                    System.out.println("Your name is: " + randomName);
-                    count++;
-                } else {
-                    System.out.println("Error input!");
-                }
-
-                System.out.println("1. Add more players\n2. Finish entering names, start the game");
-                qinput = scanner.nextLine();
-            }
-
-            if (count >= 2 && count <= 6) {
-                System.out.println("Game start");
-                for (int round = 0; round < 99; round++) {
-                    for (int i = 0; i < game.players.size(); i++) {
-                        Player currentPlayer = game.players.get(game.currentPlayerIndex);
-                        if (currentPlayer.money <= 0) {
-                            // System.out.println("Sorry, You go bankrupt.");
-                            game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
-                            game.removePlayer(currentPlayer.name);
-                        }
-                        if (game.players.size() <= 1) {
-                            Player cPlayer = game.players.get(game.currentPlayerIndex);
-                            System.out.println(cPlayer.name + " wins!");
-                            System.exit(0);
-                        }
-                        game.playTurn();
+                    if (action.equals("1")) {
+                        game.loadGameBoard();
+                        break;
+                    } else if (action.equals("2")) {
+                        game.designNewGameboard();
+                        break;
+                    } else {
+                        System.out.println("Invalid choice. Please enter 1 or 2.");
                     }
                 }
+                break;
             } else {
-                System.out.println("Not enough players to start the game");
+                System.out.println("Invalid choice. Please enter 'existing' or 'custom'.");
             }
+        }
+
+        List<Player> players = new ArrayList<>();
+        String qinput = "1";
+        int count = 0;
+
+        while (qinput.equals("1")) {
+            System.out.println("1. Enter your name\n2. Generate a random name");
+            String input = scanner.nextLine();
+            String name = null;
+
+            if (input.equals("1")) {
+                System.out.println("Please enter your name: ");
+                name = scanner.nextLine();
+                if (!name.trim().isEmpty()) {
+                    game.addPlayer(name);
+                    count++;
+                } else {
+                    System.out.println("Invalid name. Please enter your name again.");
+                    continue;
+                }
+            } else if (input.equals("2")) {
+                String randomName = RandomNameGenerator.generateRandomName();
+                game.addPlayer(randomName);
+                System.out.println("Your name is: " + randomName);
+                count++;
+            } else {
+                System.out.println("Error input! Please enter 1 or 2.");
+                continue;
+            }
+
+            System.out.println("1. Add more players\n2. Finish entering names, start the game");
+            qinput = scanner.nextLine();
+        }
+
+        if (count >= 2 && count <= 6) {
+            System.out.println("Game start");
+            for (int round = 0; round < 99; round++) {
+                for (int i = 0; i < game.players.size(); i++) {
+                    Player currentPlayer = game.players.get(game.currentPlayerIndex);
+                    if (currentPlayer.money <= 0) {
+                        // System.out.println("Sorry, You go bankrupt.");
+                        game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
+                        game.removePlayer(currentPlayer.name);
+                    }
+                    if (game.players.size() <= 1) {
+                        Player cPlayer = game.players.get(game.currentPlayerIndex);
+                        System.out.println(cPlayer.name + " wins!");
+                        System.exit(0);
+                    }
+                    game.playTurn();
+                }
+            }
+        } else {
+            System.out.println("Not enough players to start the game");
         }
     }
 }
-
-
-
