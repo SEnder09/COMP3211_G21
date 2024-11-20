@@ -752,6 +752,8 @@ public class MonopolyGame {
 
         while (true) {
             System.out.println("Do you want to play on an existing gameboard or a custom gameboard? (existing/custom)");
+            System.out.println("Note: If you want to continue from your last game, please enter the existing gameboard and select the previous gameboard you played.");
+
             String boardChoice = scanner.nextLine();
 
             if (boardChoice.equalsIgnoreCase("existing")) {
