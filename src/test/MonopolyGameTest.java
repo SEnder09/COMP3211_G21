@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import java.util.ArrayList;
 import java.io.*;
 import java.util.List;
 import java.io.FileReader;
@@ -43,14 +43,241 @@ class MonopolyGameTest {
         assertTrue(!test, "Failed to add the player!");
     }
 
+
     @Test
-    void playTurn() {
+    void testInitialMoney() {
+        game.addPlayer("Player1");
+        assertEquals(1500, game.getPlayers().get(0).getMoney());
+    }
+
+    @Test
+    void testRollDice() {
+        for (int i = 0; i < 100; i++) {
+            MonopolyGame.DiceResult result = game.rollDice();
+            assertTrue(result.getSum() >= 2);
+            assertTrue(result.getSum() <= 8);
+        }
+    }
+
+
+    @Test
+    void testAddMoney() {
+        Player player = new Player("Player1");
+        player.addMoney(500);
+        assertEquals(2000, player.getMoney());
+        player.addMoney(-200);
+        assertEquals(1800, player.getMoney());
+    }
+
+
+    @Test
+    public void testQueryNextPlayer() {
+        MonopolyGame game = new MonopolyGame();
+        game.addPlayer("player1");
+        game.addPlayer("player2");
+        game.addPlayer("player3");
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        game.queryNextPlayer();
+
+        String expectedOutput = "Next Player: player2\n" +
+                "Money: $1500\n" +
+                "Position: 0\n" +
+                "In Jail: No\n" +
+                "Owned Properties:\n";
+        assertEquals(expectedOutput, outContent.toString());
+
+        // Reset the standard output
+        System.setOut(System.out);
+    }
+
+
+    @Test
+    public void testViewGameStatus() {
+        MonopolyGame game = new MonopolyGame();
+        game.addPlayer("Player1");
+        game.addPlayer("Player2");
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        game.viewGameStatus();
+
+        StringBuilder expectedOutput = new StringBuilder();
+        expectedOutput.append("Game Status:\n");
+        expectedOutput.append("Board:\n");
+        for (int i = 0; i < MonopolyGame.properties.length; i++) {
+            Property property = MonopolyGame.properties[i];
+            expectedOutput.append("Square ").append(i + 1).append(": ").append(property.name);
+            if (property.price > 0) {
+                expectedOutput.append(" (Price: ").append(property.price).append(", Rent: ").append(property.rent).append(")");
+            }
+            expectedOutput.append("\n");
+        }
+        expectedOutput.append("\nPlayers' Positions:\n");
+        for (Player player : game.getPlayers()) {
+            expectedOutput.append(player.getName()).append(" is on square ").append(player.getPosition()).append("\n");
+        }
+
+        assertEquals(expectedOutput.toString(), outContent.toString());
+
+        System.setOut(System.out);
+    }
+
+    @Test
+    void viewAllPlayersStatus() {
+        MonopolyGame game = new MonopolyGame();
+        game.addPlayer("Player1");
+        game.addPlayer("Player2");
+
+        // Capture the output of viewAllPlayersStatus
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        game.viewAllPlayersStatus();
+
+        StringBuilder expectedOutput = new StringBuilder();
+        expectedOutput.append("Player Name: Player1\n");
+        expectedOutput.append("Money: $1500\n");
+        expectedOutput.append("Position: 0\n");
+        expectedOutput.append("In Jail: No\n");
+        expectedOutput.append("Properties owned:\n\n");
+
+        expectedOutput.append("Player Name: Player2\n");
+        expectedOutput.append("Money: $1500\n");
+        expectedOutput.append("Position: 0\n");
+        expectedOutput.append("In Jail: No\n");
+        expectedOutput.append("Properties owned:\n\n");
+
+        assertEquals(expectedOutput.toString(), outContent.toString());
+
+        System.setOut(System.out);
+    }
+
+    @Test
+    public void testViewPlayerStatus() {
+        MonopolyGame game = new MonopolyGame();
+        game.addPlayer("Player1");
+        game.addPlayer("Player2");
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        game.viewAllPlayersStatus();
+
+        String expectedOutput = "Player Name: Player1\n" +
+                "Money: $1500\n" +
+                "Position: 0\n" +
+                "In Jail: No\n" +
+                "Properties owned:\n\n" +
+                "Player Name: Player2\n" +
+                "Money: $1500\n" +
+                "Position: 0\n" +
+                "In Jail: No\n" +
+                "Properties owned:\n\n";
+
+        assertEquals(expectedOutput, outContent.toString());
+
+        // Reset the standard output
+        System.setOut(System.out);
+    }
+
+    @Test
+    void testHandleIncomeTax() {
+        Player player = new Player("Player1");
+        player.addMoney(5000);
+
+        game.addPlayer(player.getName());
+        player.setPosition(4);
+        game.handleIncomeTax(player);
+
+        assertEquals(5850, player.getMoney());
+    }
+
+    @Test
+    void testHandleProperty() {
+        Player player = new Player("Player1");
+        Property property = new Property("Central", 800, 90);
+
+        assertFalse(property.owned);
+        assertNull(property.owner);
+
+        player.addProperty(property);
+        property.owned = true;
+        property.owner = player;
+
+        assertTrue(property.owned);
+        assertEquals(player, property.owner);
+        assertEquals(1, player.getOwnedProperties().size());
+        assertEquals("Central", player.getOwnedProperties().get(0).name);
 
     }
 
-//    @org.junit.jupiter.api.Test
-//    void saveGame() {
-//    }
+
+
+    @Test
+    void handleGo(){
+        Player player = new Player("Player");
+        game.addPlayer(player.getName());
+
+        player.position = 0;
+        player.state = 1;
+        game.handleGo(player);
+
+        assertEquals(3000, player.getMoney());
+    }
+
+
+    @Test
+    void handleChance() {
+        Player player = new Player("Player");
+        game.addPlayer(player.getName());
+
+        game.handleChance(player);
+        int money = player.getMoney();
+        assertTrue(money >= 1200 && money <= 1700, "Chance resulted in unexpected money amount: " + money);
+    }
+
+    @Test
+    void handleFreeParking() {
+        Player player = new Player("Player");
+        game.addPlayer(player.getName());
+
+        game.handleFreeParking();
+        assertEquals(1500, player.getMoney());
+        assertEquals(0, player.getPosition());
+    }
+
+    @Test
+    void handleJustVisiting() {
+
+    }
+
+    @Test void handleGoToJail(){
+        Player player = new Player("Player1");
+        player.setPosition(16); // Go to jail position
+        game.handleGoToJail(player);
+        assertTrue(player.inJail);
+        assertEquals(6, player.getPosition());
+    }
+
+    @Test
+    public void test_pays_to_exit_jail() {
+        Player player = new Player("TestPlayer");
+        player.setPosition(15);
+        MonopolyGame game = new MonopolyGame();
+        game.handleGoToJail(player);
+
+        int bailAmount = 150;
+        player.addMoney(-bailAmount);
+        player.inJail = false;
+
+        assertEquals(1350, player.getMoney());
+        assertFalse(player.inJail);
+    }
+
 
     @Test
     void testSaveGame() {
@@ -116,20 +343,63 @@ class MonopolyGameTest {
     }
 
 
+
     @Test
-    void modifyGameBoard() {
+    void testModifyGameBoard() {
+        game.modifyGameBoard(1, "New Central", 900, 100);
+        Property modifiedProperty = game.properties[1];
+        assertEquals("New Central", modifiedProperty.name);
+        assertEquals(900, modifiedProperty.price);
+        assertEquals(100, modifiedProperty.rent);
+    }
+
+
+    // Players can design a custom game board and start a game with it
+    @Test
+    public void testDesignNewGameboard() {
+        MonopolyGame game = new MonopolyGame();
+        game.modifyGameBoard(1, "New Central", 1000, 100);
+        game.modifyGameBoard(2, "New Wan Chai", 900, 80);
+
+        assertEquals("New Central", MonopolyGame.properties[1].name);
+        assertEquals(1000, MonopolyGame.properties[1].price);
+        assertEquals(100, MonopolyGame.properties[1].rent);
+
+        assertEquals("New Wan Chai", MonopolyGame.properties[2].name);
+        assertEquals(900, MonopolyGame.properties[2].price);
+        assertEquals(80, MonopolyGame.properties[2].rent);
+
     }
 
     @Test
-    void main() {
+    void saveGameBoard(){
+
     }
+
+    @Test
+    void loadGameBoard(){
+
+    }
+
+    @Test
+    public void testStartNewGame() throws IOException {
+        MonopolyGame game = new MonopolyGame();
+        InputStream sysInBackup = System.in;
+        ByteArrayInputStream in = new ByteArrayInputStream("1\nexisting\n3\n".getBytes());
+        System.setIn(in);
+        game.main(new String[]{});
+        assertEquals(0, game.getPlayers().size());
+        System.setIn(sysInBackup);
+    }
+
+
 }
 
 class RandomNameGeneratorTest{
     private static final int MAX_LENGTH = 10;
     @Test
     void testRandomNameGenerator() {
-        for (int i = 0; i < 100; i++) { 
+        for (int i = 0; i < 100; i++) {
             String name = RandomNameGenerator.generateRandomName();
             assertTrue(name.length() >= 1 && name.length() <= MAX_LENGTH);
         }
