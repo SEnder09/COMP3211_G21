@@ -85,10 +85,10 @@ class Player {
 
 
 public class MonopolyGame {
-    private static final int BOARD_SIZE = 20;
-    private static Property[] properties;
+    public static final int BOARD_SIZE = 20;
+    public static Property[] properties;
     private static List<Player> players;
-    private static int currentPlayerIndex;
+    public static int currentPlayerIndex;
     public int dice1, dice2;
     public int round = 0;
     public static final int MAXIMUM_ROUND = 100;
@@ -247,7 +247,7 @@ public class MonopolyGame {
     }
 
 
-    private void queryNextPlayer() {
+    public void queryNextPlayer() {
         int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
         Player nextPlayer = players.get(nextPlayerIndex);
         System.out.println("Next Player: " + nextPlayer.getName());
@@ -260,7 +260,7 @@ public class MonopolyGame {
         }
     }
 
-    private void viewGameStatus() {
+    public void viewGameStatus() {
         System.out.println("Game Status:");
         System.out.println("Board:");
         for (int i = 0; i < properties.length; i++) {
@@ -280,7 +280,7 @@ public class MonopolyGame {
         }
     }
 
-    private void viewAllPlayersStatus() {
+    public void viewAllPlayersStatus() {
         for (Player player : players) {
             System.out.println("Player Name: " + player.getName());
             System.out.println("Money: $" + player.getMoney());
@@ -353,7 +353,7 @@ public class MonopolyGame {
 
     }
 
-    private DiceResult rollDice() {
+    public DiceResult rollDice() {
         Random rand = new Random();
         int dice1 = rand.nextInt(4) + 1;
         int dice2 = rand.nextInt(4) + 1;
@@ -361,14 +361,14 @@ public class MonopolyGame {
         return new DiceResult(dice1, dice2, sameDice); // Return a new DiceResult object
     }
 
-    private void handleIncomeTax(Player player) {
+    public void handleIncomeTax(Player player) {
         Property property = properties[player.position];
         player.money -= 10 * (player.money / 100);
         System.out.println("You need to pay 10% income tax!");
         System.out.println("Your money becomes " + player.money);
     }
 
-    private void handleProperty(Player player) {
+    public void handleProperty(Player player) {
         int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE; //solve out of bound problem
         Property property = properties[Position];
 
@@ -402,7 +402,7 @@ public class MonopolyGame {
     }
 
 
-    private void handleGo(Player player) {
+    public void handleGo(Player player) {
         if (player.state == 1) {
             player.money += 1500;
             // System.out.println("Now you are in the " + player.position);
@@ -410,7 +410,7 @@ public class MonopolyGame {
         }
     }
 
-    private void handleChance(Player player) {
+    public void handleChance(Player player) {
         System.out.println("Now you land on chance!");
         Random num = new Random();
         int amount = (num.nextInt(51) - 30) * 10;
@@ -423,7 +423,7 @@ public class MonopolyGame {
         System.out.println("Total money: " + player.getMoney());
     }
 
-    private void handleFreeParking() {
+    public void handleFreeParking() {
         // System.out.println("Now you are in the " + player.position);
         System.out.println("You landed on Free Parking.");
     }
@@ -495,7 +495,7 @@ public class MonopolyGame {
     }
 
     // find if player position currently on go to jail(sq 15)
-    private void handleGoToJail(Player player) {
+    public void handleGoToJail(Player player) {
         System.out.println(player.name + " currently landed on [Go to jail]");
         System.out.println(player.name + " is sent to jail");
 
@@ -674,7 +674,7 @@ public class MonopolyGame {
     }
 
 
-    private void saveGameBoard() {
+    public void saveGameBoard() {
         String fileName = "gameboard.csv";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
@@ -689,7 +689,7 @@ public class MonopolyGame {
         }
     }
 
-    private void loadGameBoard() {
+    public void loadGameBoard() {
         String fileName = "gameboard.csv";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
