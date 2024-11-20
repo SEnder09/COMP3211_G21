@@ -243,6 +243,7 @@ public class MonopolyGame {
 
         System.out.println("<-- Enter to continue -->");
         scanner.nextLine();
+
     }
 
 
@@ -441,7 +442,8 @@ public class MonopolyGame {
             if (sameDice) { // player rolled same dice, get out of Jail
                 System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " released from jail now.");
                 int position = (player.position + sum) % BOARD_SIZE;
-                player.setPosition(position); // Move player to the position of adding the dice they roll
+                //player.setPosition(position); // Move player to the position of adding the dice they roll
+                player.setPosition(15);
                 player.inJail = false;
                 break;
             }
@@ -730,7 +732,7 @@ public class MonopolyGame {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         MonopolyGame game = new MonopolyGame();
         Scanner scanner = new Scanner(System.in);
 
@@ -742,7 +744,7 @@ public class MonopolyGame {
             if (choice.equals("1") || choice.equals("2")) {
                 if (choice.equals("2")) {
                     game.loadGame();
-                    return;
+                    break;
                 }
                 break;
             } else {
@@ -752,6 +754,7 @@ public class MonopolyGame {
 
         while (true) {
             System.out.println("Do you want to play on an existing gameboard or a custom gameboard? (existing/custom)");
+            System.out.println("Note: If you want to continue from your last game, please enter the existing gameboard and select the previous gameboard you played.");
             String boardChoice = scanner.nextLine();
 
             if (boardChoice.equalsIgnoreCase("existing")) {
@@ -780,11 +783,17 @@ public class MonopolyGame {
         List<Player> players = new ArrayList<>();
         String qinput = "1";
         int count = 0;
+        String fileName = "monopoly_game_state.csv";
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        while (reader.readLine() != null) count++;
+        reader.close();
+        count-=1;
 
         while (qinput.equals("1")) {
-            System.out.println("1. Enter your name\n2. Generate a random name");
+            System.out.println("1. Enter your name\n2. Generate a random name\n3. Start the game");
             String input = scanner.nextLine();
             String name = null;
+
 
             if (input.equals("1")) {
                 System.out.println("Please enter your name: ");
