@@ -131,6 +131,12 @@ public class MonopolyGame {
     public List<Player> getPlayers() {
         return players;
     }
+    public void removeProperty(Player player){
+        for(Property property:player.ownedProperties){
+            property.owned = false;
+        }
+        player.ownedProperties.removeAll(player.ownedProperties);
+    }
     public void playTurn() {
         Player currentPlayer = players.get(currentPlayerIndex);
 
@@ -165,6 +171,9 @@ public class MonopolyGame {
                 if (!currentPlayer.inJail && currentPlayer.state == 1) {
                     System.out.println(currentPlayer.name + " rolled a " + diceRoll);
                     if ((currentPlayer.position + diceRoll) > BOARD_SIZE) {
+                        currentPlayer.bonus = 1;
+                    }
+                    if(currentPlayer.position == 0){
                         currentPlayer.bonus = 1;
                     }
                     currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
@@ -428,7 +437,9 @@ public class MonopolyGame {
     }
 
     private void handleJustVisiting(Player player) { // Also the state of in jail
-//        int diceCount = 0;
+        if(player.jailDay > 3){
+            player.jailDay = 0;
+        }
         player.jailDay++; // jailDay = 1 means Day1 in jail
         while (player.inJail) { // need to get the value of two dice
             DiceResult result = rollDice(); // Call the rollDice method
@@ -439,16 +450,13 @@ public class MonopolyGame {
             System.out.println("First dice " + player.name + " rolled is " + dice1);
             System.out.println("Second dice " + player.name + " rolled is " + dice2);
             if (sameDice) { // player rolled same dice, get out of Jail
-                System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " released from jail now.");
+                System.out.println(player.name + " successfully roll a doubles.\n" + player.name + " is released from jail now.");
                 int position = (player.position + sum) % BOARD_SIZE;
                 player.setPosition(position); // Move player to the position of adding the dice they roll
                 player.inJail = false;
+                player.jailDay = 0;
                 break;
             }
-//            diceCount++;
-//            if (diceCount == 1) {
-//            System.out.println("First dice " + player.name + " rolled is " + dice1);
-//            System.out.println("Second dice " + player.name + " rolled is " + dice2);
             System.out.println("Do you want to pay fine? (yes/no)");
             System.out.println("Remaining money of " + player.name + " is " + player.money);
             Scanner scanner = new Scanner(System.in);
@@ -459,18 +467,7 @@ public class MonopolyGame {
                 player.setPosition(player.position + dice1 + dice2);
                 player.jailDay = 0; //release
             }
-//            else if (diceCount == 2) {
-//                System.out.println("First dice " + player.name + " rolled is " + dice1);
-//                System.out.println("Second dice " + player.name + " rolled is " + dice2);
-
-//        }
-//             else if (diceCount < 3) { // not pay fine, go to next round to roll dice
-////            if (dice1 == dice2) {
-////                player.inJail = false;
-////                player.setPosition(player.position + dice1 + dice2);
-////            }
-//            } else if (jailCount == 3) {
-            else if(input.equalsIgnoreCase("no") && player.jailDay != 3){ //round 1 and round 2 in jail
+            else if(input.equalsIgnoreCase("no") && player.jailDay < 3){ //round 1 and round 2 in jail
                 System.out.println("Day " + player.jailDay + " in jail...");
                 break;
             }
@@ -484,6 +481,8 @@ public class MonopolyGame {
                 } else {
                     player.money -= 150;
                     System.out.println("You don't have enough money to pay fine, you are broke!");
+                    player.inJail = false;
+                    removeProperty(player);
                     removePlayer(player.name);
                 }
             }
@@ -817,9 +816,10 @@ public class MonopolyGame {
             for (int round = 0; round < 99; round++) {
                 for (int i = 0; i < game.players.size(); i++) {
                     Player currentPlayer = game.players.get(game.currentPlayerIndex);
-                    if (currentPlayer.money <= 0) {
+                    if (currentPlayer.money < 0) {
                         // System.out.println("Sorry, You go bankrupt.");
                         game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
+                        game.removeProperty(currentPlayer);
                         game.removePlayer(currentPlayer.name);
                     }
                     if (game.players.size() <= 1) {
