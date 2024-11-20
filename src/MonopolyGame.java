@@ -742,7 +742,7 @@ public class MonopolyGame {
             if (choice.equals("1") || choice.equals("2")) {
                 if (choice.equals("2")) {
                     game.loadGame();
-                    return;
+                    break;
                 }
                 break;
             } else {
@@ -812,7 +812,7 @@ public class MonopolyGame {
 
         if (count >= 2 && count <= 6) {
             System.out.println("Game start");
-            for (int round = 0; round < 99; round++) {
+            for (int round = 0; round < 100; round++) {
                 for (int i = 0; i < game.players.size(); i++) {
                     Player currentPlayer = game.players.get(game.currentPlayerIndex);
                     if (currentPlayer.money <= 0) {
@@ -827,6 +827,10 @@ public class MonopolyGame {
                     }
                     game.playTurn();
                 }
+            }
+            Player winner = game.players.stream().max(Comparator.comparingInt(player -> player.money)).orElse(null);
+            if (winner != null) {
+                System.out.println("Game over! " + winner.name + " wins! He has the most money!");
             }
         } else {
             System.out.println("Not enough players to start the game");
