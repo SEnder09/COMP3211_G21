@@ -742,7 +742,7 @@ public class MonopolyGame {
             if (choice.equals("1") || choice.equals("2")) {
                 if (choice.equals("2")) {
                     game.loadGame();
-                    break; // return change to break
+                    return;
                 }
                 break;
             } else {
@@ -782,7 +782,7 @@ public class MonopolyGame {
         int count = 0;
 
         while (qinput.equals("1")) {
-            System.out.println("1. Enter your name\n2. Generate a random name\n3. Start the game");
+            System.out.println("1. Enter your name\n2. Generate a random name");
             String input = scanner.nextLine();
             String name = null;
 
@@ -814,7 +814,7 @@ public class MonopolyGame {
 
         if (count >= 2 && count <= 6) {
             System.out.println("Game start");
-            for (int round = 0; round < 99; round++) {
+            for (int round = 0; round < 100; round++) {
                 for (int i = 0; i < game.players.size(); i++) {
                     Player currentPlayer = game.players.get(game.currentPlayerIndex);
                     if (currentPlayer.money <= 0) {
@@ -829,6 +829,10 @@ public class MonopolyGame {
                     }
                     game.playTurn();
                 }
+            }
+            Player winner = game.players.stream().max(Comparator.comparingInt(player -> player.money)).orElse(null);
+            if (winner != null) {
+                System.out.println("Game over! " + winner.name + " wins! He has the most money!");
             }
         } else {
             System.out.println("Not enough players to start the game");
