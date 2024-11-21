@@ -1,3 +1,6 @@
+package model;
+
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -6,75 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.*;
-import java.util.*;
 
-
-class Property {
-    String name;
-    int price;
-    int rent;
-    boolean owned;
-    Player owner;
-
-    public Property(String name, int price, int rent) {
-        this.name = name;
-        this.price = price;
-        this.rent = rent;
-        this.owned = false;
-        this.owner = null;
-    }
-}
-
-class Player {
-    String name;
-    int money;
-    int position;
-    boolean inJail;
-    int state;
-    int bonus;
-    List<Property> ownedProperties;
-    int jailDay;
-    // changesjkljk
-    public Player(String name) {
-        this.name = name;
-        this.money = 1500; // Starting money
-        this.position = 0; // Starts on square 0
-        this.inJail = false;
-        this.state = 0; // 0: first turn, in 'GO' doesn't earn  1500
-        // 1: other turn, in 'GO' get 1500
-        this.bonus = 0;
-        this.ownedProperties = new ArrayList<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void addMoney(int amount) {
-        money += amount;
-    }
-
-    public int getMoney() {
-        return money;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public List<Property> getOwnedProperties() {
-        return ownedProperties;
-    }
-
-    public void addProperty(Property property) {
-        ownedProperties.add(property);
-    }
-
-}
 
 
 public class MonopolyGame {
@@ -314,7 +249,7 @@ public class MonopolyGame {
     }
 
 
-    class DiceResult {
+    public static class DiceResult {
         // private int sum;
         private int dice1, dice2, sum;
 
@@ -723,6 +658,7 @@ public class MonopolyGame {
     public static void main(String[] args) throws IOException {
         MonopolyGame game = new MonopolyGame();
         Scanner scanner = new Scanner(System.in);
+        int count = 0;
 
         System.out.println("Hi, Welcome to Monopoly Game!");
         while (true) {
@@ -732,6 +668,11 @@ public class MonopolyGame {
             if (choice.equals("1") || choice.equals("2")) {
                 if (choice.equals("2")) {
                     game.loadGame();
+                    String fileName = "monopoly_game_state.csv";
+                    BufferedReader reader = new BufferedReader(new FileReader(fileName));
+                    while (reader.readLine() != null) count++;
+                    reader.close();
+                    count-=1;
                     break;
                 }
                 break;
@@ -770,12 +711,8 @@ public class MonopolyGame {
 
         List<Player> players = new ArrayList<>();
         String qinput = "1";
-        int count = 0;
-        String fileName = "monopoly_game_state.csv";
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        while (reader.readLine() != null) count++;
-        reader.close();
-        count-=1;
+
+
 
         while (qinput.equals("1")) {
             System.out.println("1. Enter your name\n2. Generate a random name\n3. Start the game");
@@ -801,7 +738,7 @@ public class MonopolyGame {
             } else if(input.equals("3")){
                 break;
             } else {
-                System.out.println("Error input! Please enter 1 or 2.");
+                System.out.println("Error input! Please enter 1 or 2 or 3.");
                 continue;
             }
 
@@ -812,24 +749,20 @@ public class MonopolyGame {
         if (count >= 2 && count <= 6) {
             System.out.println("Game start");
             for (int round = 0; round < 100; round++) {
-                for (int i = 0; i < game.players.size(); i++) {
-                    Player currentPlayer = game.players.get(game.currentPlayerIndex);
+                for (int i = 0; i < MonopolyGame.players.size(); i++) {
+                    Player currentPlayer = MonopolyGame.players.get(currentPlayerIndex);
                     if (currentPlayer.money < 0) {
                         // System.out.println("Sorry, You go bankrupt.");
-                        game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
+                        currentPlayerIndex = (currentPlayerIndex + 1) % game.players.size();
                         game.removeProperty(currentPlayer);
-                        game.removePlayer(currentPlayer.name);
+                        removePlayer(currentPlayer.name);
                     }
-                    if (game.players.size() <= 1) {
-                        Player cPlayer = game.players.get(game.currentPlayerIndex);
+                    if (MonopolyGame.players.size() <= 1) {
+                        Player cPlayer = MonopolyGame.players.get(currentPlayerIndex);
                         System.out.println(cPlayer.name + " wins!");
                         System.exit(0);
                     }
                     game.playTurn();
-                }
-                // when the 100 rounds end, find out the final winner
-                if(round == 99){
-                    
                 }
 
             }
@@ -837,8 +770,10 @@ public class MonopolyGame {
             if (winner != null) {
                 System.out.println("Game over! " + winner.name + " wins! He has the most money!");
             }
-        } else {
+        } else if (count < 2) {
             System.out.println("Not enough players to start the game");
+        } if (count > 6) {
+            System.out.println("Exceed the maximum number of players");
         }
     }
 }

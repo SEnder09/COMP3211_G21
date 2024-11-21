@@ -1,0 +1,948 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Property</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">&lt;empty package name&gt;</a>
+</div>
+
+<h1>Coverage Summary for Class: Property (&lt;empty package name&gt;)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Property</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Random;
+&nbsp;import java.util.Scanner;
+&nbsp;import java.io.BufferedWriter;
+&nbsp;import java.io.FileWriter;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.*;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;
+&nbsp;class Property {
+&nbsp;    String name;
+&nbsp;    int price;
+&nbsp;    int rent;
+&nbsp;    boolean owned;
+&nbsp;    Player owner;
+&nbsp;
+<b class="fc">&nbsp;    public Property(String name, int price, int rent) {</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.price = price;</b>
+<b class="fc">&nbsp;        this.rent = rent;</b>
+<b class="fc">&nbsp;        this.owned = false;</b>
+<b class="fc">&nbsp;        this.owner = null;</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;class Player {
+&nbsp;    String name;
+&nbsp;    int money;
+&nbsp;    int position;
+&nbsp;    boolean inJail;
+&nbsp;    int state;
+&nbsp;    int bonus;
+&nbsp;    List&lt;Property&gt; ownedProperties;
+&nbsp;    int jailDay;
+&nbsp;    // changesjkljk
+&nbsp;    public Player(String name) {
+&nbsp;        this.name = name;
+&nbsp;        this.money = 1500; // Starting money
+&nbsp;        this.position = 0; // Starts on square 0
+&nbsp;        this.inJail = false;
+&nbsp;        this.state = 0; // 0: first turn, in &#39;GO&#39; doesn&#39;t earn  1500
+&nbsp;        // 1: other turn, in &#39;GO&#39; get 1500
+&nbsp;        this.bonus = 0;
+&nbsp;        this.ownedProperties = new ArrayList&lt;&gt;();
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName() {
+&nbsp;        return name;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addMoney(int amount) {
+&nbsp;        money += amount;
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getMoney() {
+&nbsp;        return money;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPosition(int position) {
+&nbsp;        this.position = position;
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getPosition() {
+&nbsp;        return position;
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Property&gt; getOwnedProperties() {
+&nbsp;        return ownedProperties;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addProperty(Property property) {
+&nbsp;        ownedProperties.add(property);
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;public class MonopolyGame {
+&nbsp;    public static final int BOARD_SIZE = 20;
+&nbsp;    public static Property[] properties;
+&nbsp;    public static List&lt;Player&gt; players;
+&nbsp;    public static int currentPlayerIndex;
+&nbsp;    public int dice1, dice2;
+&nbsp;    public int round = 0;
+&nbsp;    public static final int MAXIMUM_ROUND = 100;
+&nbsp;
+&nbsp;    public MonopolyGame() {
+&nbsp;        properties = new Property[]{
+&nbsp;                new Property(&quot;Go&quot;, 0, 0), // 0
+&nbsp;                new Property(&quot;Central&quot;, 800, 90), //  1
+&nbsp;                new Property(&quot;Wan Chai&quot;, 700, 65), // 2
+&nbsp;                new Property(&quot;Income tax&quot;, 0, 0), // 3
+&nbsp;                new Property(&quot;Stanley&quot;, 600, 60), // 4
+&nbsp;                new Property(&quot;Just Visiting/In Jail&quot;, 0, 0), // 5
+&nbsp;                new Property(&quot;Shek O&quot;, 400, 10), // 6
+&nbsp;                new Property(&quot;Mong Kok&quot;, 500, 40), // 7
+&nbsp;                new Property(&quot;Chance&quot;, 0, 0), // 8
+&nbsp;                new Property(&quot;Tsing Yi&quot;, 400, 15), // 9
+&nbsp;                new Property(&quot;Free Parking&quot;, 0, 0), // 10
+&nbsp;                new Property(&quot;Shatin&quot;, 700, 75), // 11
+&nbsp;                new Property(&quot;Chance&quot;, 0, 0), // 12
+&nbsp;                new Property(&quot;Tuen Mun&quot;, 400, 20), // 13
+&nbsp;                new Property(&quot;Tai Po&quot;, 500, 25), //14
+&nbsp;                new Property(&quot;Go to jail&quot;, 0, 0), // 15
+&nbsp;                new Property(&quot;Sai Kung&quot;, 400, 10), //16
+&nbsp;                new Property(&quot;Yuen Long&quot;, 400, 25), //17
+&nbsp;                new Property(&quot;Chance&quot;, 0, 0), //18
+&nbsp;                new Property(&quot;Tai O&quot;, 600, 25) //19
+&nbsp;        };
+&nbsp;
+&nbsp;        players = new ArrayList&lt;&gt;();
+&nbsp;        currentPlayerIndex = 0;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addPlayer(String name) {
+&nbsp;        players.add(new Player(name));
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void removePlayer(String name) {
+&nbsp;        players.remove(name);
+&nbsp;    }
+&nbsp;    public List&lt;Player&gt; getPlayers() {
+&nbsp;        return players;
+&nbsp;    }
+&nbsp;    public void removeProperty(Player player){
+&nbsp;        for(Property property:player.ownedProperties){
+&nbsp;            property.owned = false;
+&nbsp;        }
+&nbsp;        player.ownedProperties.removeAll(player.ownedProperties);
+&nbsp;    }
+&nbsp;    public void playTurn() {
+&nbsp;        Player currentPlayer = players.get(currentPlayerIndex);
+&nbsp;
+&nbsp;        // Display the round number
+&nbsp;        if (currentPlayerIndex == 0) {
+&nbsp;            System.out.println(&quot;Round &quot; + (round + 1));
+&nbsp;        }
+&nbsp;
+&nbsp;        System.out.println(currentPlayer.name + &quot;&#39;s turn.&quot;);
+&nbsp;        System.out.println(currentPlayer.name + &quot; has $&quot; + currentPlayer.money);
+&nbsp;        Scanner scanner = new Scanner(System.in);
+&nbsp;        boolean turnEnd = false;
+&nbsp;
+&nbsp;        while (!turnEnd) {
+&nbsp;            // Display formatted player option
+&nbsp;            System.out.printf(&quot;%-35s %-35s%n%-35s %-35s%n%-35s %-35s%n%-35s&quot;, &quot;1. Roll dice&quot;, &quot;2. Save game&quot;, &quot;3. View players&#39; status&quot;, &quot;4. View all players&#39; status&quot;, &quot;5. View game status&quot;, &quot;6. Query next player?&quot;, &quot;7. Quit game\n&quot;);
+&nbsp;            //System.out.println(&quot;1. Roll dice 2. Save game \n3. View player status \n4. View all players&#39; status \n5. View game status \n6. Query next player?\n7. Quit game\n (1/2/3/4/5/6/7)&quot;);
+&nbsp;            String input = scanner.nextLine();
+&nbsp;
+&nbsp;            // 1. Roll dice
+&nbsp;            if (input.equalsIgnoreCase(&quot;1&quot;)) {
+&nbsp;                DiceResult result = rollDice();
+&nbsp;                int diceRoll = result.getSum();
+&nbsp;                currentPlayer.bonus = 0;
+&nbsp;
+&nbsp;                if (!currentPlayer.inJail &amp;&amp; currentPlayer.state == 0) {
+&nbsp;                    System.out.println(currentPlayer.name + &quot; rolled a &quot; + diceRoll);
+&nbsp;                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE + 1;
+&nbsp;                    System.out.println(currentPlayer.name + &quot; moved to square &quot; + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
+&nbsp;                }
+&nbsp;
+&nbsp;                if (!currentPlayer.inJail &amp;&amp; currentPlayer.state == 1) {
+&nbsp;                    System.out.println(currentPlayer.name + &quot; rolled a &quot; + diceRoll);
+&nbsp;                    if ((currentPlayer.position + diceRoll) &gt; BOARD_SIZE) {
+&nbsp;                        currentPlayer.bonus = 1;
+&nbsp;                    }
+&nbsp;                    if(currentPlayer.position == 0){
+&nbsp;                        currentPlayer.bonus = 1;
+&nbsp;                    }
+&nbsp;                    currentPlayer.position = (currentPlayer.position + diceRoll) % BOARD_SIZE;
+&nbsp;                    System.out.println(currentPlayer.name + &quot; moved to square &quot; + (currentPlayer.position == 0 ? BOARD_SIZE : currentPlayer.position));
+&nbsp;                }
+&nbsp;
+&nbsp;                currentPlayer.state = 1;
+&nbsp;                //Property property = properties[currentPlayer.position - 1];
+&nbsp;                Property property = properties[(currentPlayer.position - 1 + BOARD_SIZE) % BOARD_SIZE];
+&nbsp;
+&nbsp;                if (currentPlayer.bonus == 1) {
+&nbsp;                    handleGo(currentPlayer);
+&nbsp;                    currentPlayer.bonus = 0;
+&nbsp;                }
+&nbsp;                if (currentPlayer.position == 1 &amp;&amp; currentPlayer.bonus == 1) {
+&nbsp;                    handleGo(currentPlayer);
+&nbsp;                } else if (currentPlayer.position == 4) {
+&nbsp;                    handleIncomeTax(currentPlayer);
+&nbsp;                } else if (currentPlayer.position == 6) {
+&nbsp;                    if (!currentPlayer.inJail) {
+&nbsp;                        System.out.println(currentPlayer.name + &quot; landed on &quot; + property.name);
+&nbsp;                    }
+&nbsp;                    handleJustVisiting(currentPlayer);
+&nbsp;                } else if (currentPlayer.position == 9 || currentPlayer.position == 13 || currentPlayer.position == 19) {
+&nbsp;                    handleChance(currentPlayer);
+&nbsp;                } else if (currentPlayer.position == 11) {
+&nbsp;                    handleFreeParking();
+&nbsp;                } else if (currentPlayer.position == 16) {
+&nbsp;                    handleGoToJail(currentPlayer);
+&nbsp;                } else {
+&nbsp;                    handleProperty(currentPlayer);
+&nbsp;                }
+&nbsp;                turnEnd = true;
+&nbsp;            }
+&nbsp;
+&nbsp;            // save game
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;2&quot;)) {
+&nbsp;                saveGame();
+&nbsp;                System.exit(0); // Exit the game after saving
+&nbsp;            }
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;3&quot;)) {
+&nbsp;                System.out.println(&quot;Enter player name:&quot;);
+&nbsp;                String playerName = scanner.nextLine();
+&nbsp;                viewPlayerStatus(playerName);
+&nbsp;            }
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;4&quot;)) {
+&nbsp;                viewAllPlayersStatus();
+&nbsp;            }
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;5&quot;)) {
+&nbsp;                viewGameStatus();
+&nbsp;            }
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;6&quot;)) {
+&nbsp;                queryNextPlayer();
+&nbsp;            }
+&nbsp;
+&nbsp;            if (input.equalsIgnoreCase(&quot;7&quot;)) {
+&nbsp;                System.out.println(&quot;You quit the game.&quot;);
+&nbsp;                System.exit(0);
+&nbsp;            }
+&nbsp;
+&nbsp;            if (!input.equalsIgnoreCase(&quot;1&quot;) &amp;&amp; !input.equalsIgnoreCase(&quot;2&quot;) &amp;&amp; !input.equalsIgnoreCase(&quot;3&quot;) &amp;&amp; !input.equalsIgnoreCase(&quot;4&quot;) &amp;&amp; !input.equalsIgnoreCase(&quot;5&quot;) &amp;&amp; !input.equalsIgnoreCase(&quot;6&quot;)) {
+&nbsp;                System.out.println(&quot;Invalid option. Please try again.&quot;);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+&nbsp;
+&nbsp;        if (currentPlayerIndex == 0) {
+&nbsp;            round++; // Increment the round number after all players have taken their turn
+&nbsp;        }
+&nbsp;
+&nbsp;        System.out.println(&quot;&lt;-- Enter to continue --&gt;&quot;);
+&nbsp;        scanner.nextLine();
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void queryNextPlayer() {
+&nbsp;        int nextPlayerIndex = (currentPlayerIndex + 1) % players.size();
+&nbsp;        Player nextPlayer = players.get(nextPlayerIndex);
+&nbsp;        System.out.println(&quot;Next Player: &quot; + nextPlayer.getName());
+&nbsp;        System.out.println(&quot;Money: $&quot; + nextPlayer.getMoney());
+&nbsp;        System.out.println(&quot;Position: &quot; + nextPlayer.getPosition());
+&nbsp;        System.out.println(&quot;In Jail: &quot; + (nextPlayer.inJail ? &quot;Yes&quot; : &quot;No&quot;));
+&nbsp;        System.out.println(&quot;Owned Properties:&quot;);
+&nbsp;        for (Property property : nextPlayer.getOwnedProperties()) {
+&nbsp;            System.out.println(property.name + &quot; (Price: $&quot; + property.price + &quot;, Rent: $&quot; + property.rent + &quot;)&quot;);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void viewGameStatus() {
+&nbsp;        System.out.println(&quot;Game Status:&quot;);
+&nbsp;        System.out.println(&quot;Board:&quot;);
+&nbsp;        for (int i = 0; i &lt; properties.length; i++) {
+&nbsp;            Property property = properties[i];
+&nbsp;            System.out.print(&quot;Square &quot; + (i + 1) + &quot;: &quot; + property.name);
+&nbsp;            if (property.price &gt; 0) {
+&nbsp;                System.out.print(&quot; (Price: &quot; + property.price + &quot;, Rent: &quot; + property.rent + &quot;)&quot;);
+&nbsp;                if (property.owned) {
+&nbsp;                    System.out.print(&quot; (Owned by &quot; + property.owner.getName() + &quot;)&quot;);
+&nbsp;                }
+&nbsp;            }
+&nbsp;            System.out.println();
+&nbsp;        }
+&nbsp;        System.out.println(&quot;\nPlayers&#39; Positions:&quot;);
+&nbsp;        for (Player player : players) {
+&nbsp;            System.out.println(player.getName() + &quot; is on square &quot; + player.getPosition());
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void viewAllPlayersStatus() {
+&nbsp;        for (Player player : players) {
+&nbsp;            System.out.println(&quot;Player Name: &quot; + player.getName());
+&nbsp;            System.out.println(&quot;Money: $&quot; + player.getMoney());
+&nbsp;            System.out.println(&quot;Position: &quot; + player.getPosition());
+&nbsp;            System.out.println(&quot;In Jail: &quot; + (player.inJail ? &quot;Yes&quot; : &quot;No&quot;));
+&nbsp;            System.out.println(&quot;Properties owned:&quot;);
+&nbsp;            for (Property property : player.getOwnedProperties()) {
+&nbsp;                System.out.println(property.name + &quot; (Price: $&quot; + property.price + &quot;, Rent: $&quot; + property.rent + &quot;)&quot;);
+&nbsp;            }
+&nbsp;            System.out.println(); // Add a blank line
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void viewPlayerStatus(String playerName) {
+&nbsp;        for (Player player : players) {
+&nbsp;            if (player.getName().equalsIgnoreCase(playerName)) {
+&nbsp;                System.out.println(&quot;Player Name: &quot; + player.getName());
+&nbsp;                System.out.println(&quot;Money: $&quot; + player.getMoney());
+&nbsp;                System.out.println(&quot;Position: &quot; + player.getPosition());
+&nbsp;                System.out.println(&quot;In Jail: &quot; + (player.inJail ? &quot;Yes&quot; : &quot;No&quot;));
+&nbsp;                System.out.println(&quot;Properties owned: &quot;);
+&nbsp;                for (Property property : player.getOwnedProperties()) {
+&nbsp;                    System.out.println(property.name + &quot; (Price: $&quot; + property.price + &quot;, Rent: $&quot; + property.rent + &quot;)&quot;);
+&nbsp;                }
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        }
+&nbsp;        System.out.println(&quot;Player not found.&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    class DiceResult {
+&nbsp;        // private int sum;
+&nbsp;        private int dice1, dice2, sum;
+&nbsp;
+&nbsp;        private boolean sameDice;
+&nbsp;
+&nbsp;        public DiceResult(int dice1, int dice2, boolean sameDice) {
+&nbsp;            this.dice1 = dice1;
+&nbsp;            this.dice2 = dice2;
+&nbsp;            this.sameDice = sameDice;
+&nbsp;            this.sum = dice1 + dice2;
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getDice1() {
+&nbsp;            return dice1;
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getDice2() {
+&nbsp;            return dice2;
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getSum() {
+&nbsp;            return sum;
+&nbsp;        }
+&nbsp;
+&nbsp;        public boolean isSameDice() {
+&nbsp;            return sameDice;
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public DiceResult rollDice() {
+&nbsp;        Random rand = new Random();
+&nbsp;        int dice1 = rand.nextInt(4) + 1;
+&nbsp;        int dice2 = rand.nextInt(4) + 1;
+&nbsp;        boolean sameDice = (dice1 == dice2);
+&nbsp;        return new DiceResult(dice1, dice2, sameDice); // Return a new DiceResult object
+&nbsp;    }
+&nbsp;
+&nbsp;    public void handleIncomeTax(Player player) {
+&nbsp;        Property property = properties[player.position];
+&nbsp;        player.money -= 10 * (player.money / 100);
+&nbsp;        System.out.println(&quot;You need to pay 10% income tax!&quot;);
+&nbsp;        System.out.println(&quot;Your money becomes &quot; + player.money);
+&nbsp;    }
+&nbsp;
+&nbsp;    public void handleProperty(Player player) {
+&nbsp;        int Position = (player.position - 1 + BOARD_SIZE) % BOARD_SIZE; //solve out of bound problem
+&nbsp;        Property property = properties[Position];
+&nbsp;
+&nbsp;        if (Position == 0) {
+&nbsp;            return; // Exit the method so Go will not be treated as property
+&nbsp;        }
+&nbsp;
+&nbsp;        if (!property.owned) {
+&nbsp;            System.out.println(&quot;You landed on &quot; + property.name + &quot;. Price: &quot; + property.price);
+&nbsp;            if (player.money &gt;= property.price) {
+&nbsp;                System.out.println(&quot;Do you want to buy it? (yes/no)&quot;);
+&nbsp;                Scanner scanner = new Scanner(System.in);
+&nbsp;                String input = scanner.nextLine();
+&nbsp;                if (input.equalsIgnoreCase(&quot;yes&quot;)) {
+&nbsp;                    player.money -= property.price;
+&nbsp;                    property.owned = true;
+&nbsp;                    property.owner = player;
+&nbsp;                    player.addProperty(property);
+&nbsp;                    System.out.println(&quot;You bought &quot; + property.name + &quot;. Remaining money: &quot; + player.money);
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                System.out.println(&quot;Not enough money to buy this property.&quot;);
+&nbsp;            }
+&nbsp;        } else if (property.owned == true &amp;&amp; property.owner == player) {
+&nbsp;            System.out.println(&quot;You landed on your own place &quot; + property.name);
+&nbsp;        } else {
+&nbsp;            System.out.println(&quot;Property &quot; + property.name + &quot; is owned. Pay rent: &quot; + property.rent);
+&nbsp;            player.money -= property.rent;
+&nbsp;            System.out.println(&quot;Remaining money: &quot; + player.money);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void handleGo(Player player) {
+&nbsp;        if (player.state == 1) {
+&nbsp;            player.money += 1500;
+&nbsp;            // System.out.println(&quot;Now you are in the &quot; + player.position);
+&nbsp;            System.out.println(&quot;You have earned 1500 HKD. Now your asset becomes &quot; + player.money);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void handleChance(Player player) {
+&nbsp;        System.out.println(&quot;Now you land on chance!&quot;);
+&nbsp;        Random num = new Random();
+&nbsp;        int amount = (num.nextInt(51) - 30) * 10;
+&nbsp;        if (amount &gt; 0) {
+&nbsp;            System.out.println(&quot;You gained HKD: &quot; + amount);
+&nbsp;        } else {
+&nbsp;            System.out.println(&quot;You lost HKD: &quot; + amount);
+&nbsp;        }
+&nbsp;        player.addMoney(amount);
+&nbsp;        System.out.println(&quot;Total money: &quot; + player.getMoney());
+&nbsp;    }
+&nbsp;
+&nbsp;    public void handleFreeParking() {
+&nbsp;        // System.out.println(&quot;Now you are in the &quot; + player.position);
+&nbsp;        System.out.println(&quot;You landed on Free Parking.&quot;);
+&nbsp;    }
+&nbsp;
+&nbsp;    public void handleJustVisiting(Player player) { // Also the state of in jail
+&nbsp;        if(player.jailDay &gt; 3){
+&nbsp;            player.jailDay = 0;
+&nbsp;        }
+&nbsp;        player.jailDay++; // jailDay = 1 means Day1 in jail
+&nbsp;        while (player.inJail) { // need to get the value of two dice
+&nbsp;            DiceResult result = rollDice(); // Call the rollDice method
+&nbsp;            int dice1 = result.getDice1();
+&nbsp;            int dice2 = result.getDice2();
+&nbsp;            int sum = dice1 + dice2; // Get the sum of the dice
+&nbsp;            boolean sameDice = result.isSameDice(); // Get the boolean result
+&nbsp;            System.out.println(&quot;First dice &quot; + player.name + &quot; rolled is &quot; + dice1);
+&nbsp;            System.out.println(&quot;Second dice &quot; + player.name + &quot; rolled is &quot; + dice2);
+&nbsp;            if (sameDice) { // player rolled same dice, get out of Jail
+&nbsp;                System.out.println(player.name + &quot; successfully roll a doubles.\n&quot; + player.name + &quot; is released from jail now.&quot;);
+&nbsp;                int position = (6 + sum) % BOARD_SIZE;
+&nbsp;                player.setPosition(position);
+&nbsp;                player.inJail = false;
+&nbsp;                player.jailDay = 0;
+&nbsp;                break;
+&nbsp;            }
+&nbsp;            System.out.println(&quot;Do you want to pay fine? (yes/no)&quot;);
+&nbsp;            System.out.println(&quot;Remaining money of &quot; + player.name + &quot; is &quot; + player.money);
+&nbsp;            Scanner scanner = new Scanner(System.in);
+&nbsp;            String input = scanner.nextLine();
+&nbsp;            if (input.equalsIgnoreCase(&quot;yes&quot;) &amp;&amp; (player.money &gt; 150)) {
+&nbsp;                player.money -= 150;
+&nbsp;
+&nbsp;                player.inJail = false;
+&nbsp;                player.setPosition(player.position + dice1 + dice2);
+&nbsp;                player.jailDay = 0; //release
+&nbsp;                break;
+&nbsp;            }
+&nbsp;
+&nbsp;            else if(input.equalsIgnoreCase(&quot;no&quot;) &amp;&amp; player.jailDay &lt; 3){ //round 1 and round 2 in jail
+&nbsp;                System.out.println(&quot;Day &quot; + player.jailDay + &quot; in jail...&quot;);
+&nbsp;                break;
+&nbsp;            }
+&nbsp;            else{
+&nbsp;                System.out.println(&quot;Error input! Please try again...&quot;);
+&nbsp;            }
+&nbsp;            if(player.jailDay == 3) {
+&nbsp;                if (player.money &gt; 150) {
+&nbsp;                    player.money -= 150;
+&nbsp;                    System.out.println(&quot;You are required to pay a $150 fine to be released from jail now.&quot;);
+&nbsp;                    player.inJail = false;
+&nbsp;                    player.jailDay = 0;
+&nbsp;                    player.setPosition(player.position + dice1 + dice2);
+&nbsp;                } else {
+&nbsp;                    player.money -= 150;
+&nbsp;                    System.out.println(&quot;You don&#39;t have enough money to pay fine, you are broke!&quot;);
+&nbsp;                    player.inJail = false;
+&nbsp;                    player.jailDay = 0;
+&nbsp;                    removeProperty(player);
+&nbsp;                    removePlayer(player.name);
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // find if player position currently on go to jail(sq 15)
+&nbsp;    public void handleGoToJail(Player player) {
+&nbsp;        System.out.println(player.name + &quot; currently landed on [Go to jail]&quot;);
+&nbsp;        System.out.println(player.name + &quot; is sent to jail&quot;);
+&nbsp;
+&nbsp;        player.setPosition(6); // move player to in jail square
+&nbsp;        player.inJail = true; // the handle just visiting
+&nbsp;        // System.out.println(&quot;Player currently landed on: &quot;);
+&nbsp;    }
+&nbsp;    // data required to store?
+&nbsp;    // round, player info, property info
+&nbsp;
+&nbsp;    public void saveGame() {
+&nbsp;        String fileName = &quot;monopoly_game_state.csv&quot;;
+&nbsp;
+&nbsp;        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+&nbsp;            // Write header
+&nbsp;            writer.write(&quot;Player Name,Money,Position,In Jail,Owned Properties&quot;);
+&nbsp;            writer.newLine();
+&nbsp;
+&nbsp;            // Write player data
+&nbsp;            for (Player player : players) {
+&nbsp;                StringBuilder sb = new StringBuilder();
+&nbsp;                sb.append(player.getName()).append(&quot;,&quot;)
+&nbsp;                        .append(player.getMoney()).append(&quot;,&quot;)
+&nbsp;                        .append(player.getPosition()).append(&quot;,&quot;)
+&nbsp;                        .append(player.inJail).append(&quot;,&quot;);
+&nbsp;
+&nbsp;                // Append owned properties
+&nbsp;                List&lt;Property&gt; ownedProperties = player.getOwnedProperties();
+&nbsp;                if (ownedProperties.isEmpty()) {
+&nbsp;                    sb.append(&quot;None&quot;);
+&nbsp;                } else {
+&nbsp;                    for (Property property : ownedProperties) {
+&nbsp;                        sb.append(property.name).append(&quot; Price: $&quot;).append(property.price)
+&nbsp;                                .append(&quot;*Rent: $&quot;).append(property.rent).append(&quot;) (&quot;);
+&nbsp;                    }
+&nbsp;                    // Remove the trailing comma and space
+&nbsp;                    sb.setLength(sb.length() - 2);
+&nbsp;                }
+&nbsp;
+&nbsp;                writer.write(sb.toString());
+&nbsp;                writer.newLine();
+&nbsp;            }
+&nbsp;
+&nbsp;            System.out.println(&quot;Game saved successfully to &quot; + fileName);
+&nbsp;        } catch (IOException e) {
+&nbsp;            System.out.println(&quot;An error occurred while saving the game: &quot; + e.getMessage());
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void loadGame() {
+&nbsp;        String fileName = &quot;monopoly_game_state.csv&quot;;
+&nbsp;
+&nbsp;        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+&nbsp;            String header = reader.readLine(); // Read and ignore the header line
+&nbsp;
+&nbsp;            String line;
+&nbsp;            while ((line = reader.readLine()) != null) {
+&nbsp;                String[] playerData = line.split(&quot;,&quot;);
+&nbsp;
+&nbsp;                if (playerData.length &lt; 5) {
+&nbsp;                    System.out.println(&quot;Invalid data format for player: &quot; + line);
+&nbsp;                    continue; // Skip invalid lines
+&nbsp;                }
+&nbsp;
+&nbsp;                String playerName = playerData[0].trim();
+&nbsp;                int playerMoney = Integer.parseInt(playerData[1].trim());
+&nbsp;                int playerPosition = Integer.parseInt(playerData[2].trim());
+&nbsp;                boolean inJail = Boolean.parseBoolean(playerData[3].trim());
+&nbsp;
+&nbsp;                // Add player to the game using the addPlayer method
+&nbsp;                addPlayer(playerName); // Add the player using the method
+&nbsp;
+&nbsp;                // Initialize the player properties
+&nbsp;                Player player = players.get(players.size() - 1); // Get the last added player
+&nbsp;                player.addMoney(playerMoney - player.getMoney()); // Adjust the player&#39;s money
+&nbsp;                player.setPosition(playerPosition);
+&nbsp;                player.inJail = inJail;
+&nbsp;
+&nbsp;                // Process owned properties as before...
+&nbsp;                // (Keep the owned properties loading logic here)
+&nbsp;            }
+&nbsp;
+&nbsp;            System.out.println(&quot;Game loaded successfully from &quot; + fileName);
+&nbsp;        } catch (IOException e) {
+&nbsp;            System.out.println(&quot;An error occurred while loading the game: &quot; + e.getMessage());
+&nbsp;        } catch (NumberFormatException e) {
+&nbsp;            System.out.println(&quot;Error parsing number in game state: &quot; + e.getMessage());
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void modifyGameBoard(int SquareNumber, String name, int price, int rent) {
+&nbsp;        properties[SquareNumber].name = name;
+&nbsp;        properties[SquareNumber].price = price;
+&nbsp;        properties[SquareNumber].rent = rent;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private void designNewGameboard() {
+&nbsp;        Scanner scanner = new Scanner(System.in);
+&nbsp;
+&nbsp;        // Display the current gameboard
+&nbsp;        System.out.println(&quot;Existing Gameboard:&quot;);
+&nbsp;        for (int i = 0; i &lt; properties.length; i++) {
+&nbsp;            Property property = properties[i];
+&nbsp;            System.out.print(&quot;Square &quot; + (i + 1) + &quot;: &quot; + property.name);
+&nbsp;            if (property.price &gt; 0) {
+&nbsp;                System.out.print(&quot; (Price: &quot; + property.price + &quot;, Rent: &quot; + property.rent + &quot;)&quot;);
+&nbsp;            }
+&nbsp;            System.out.println();
+&nbsp;        }
+&nbsp;
+&nbsp;        while (true) {
+&nbsp;            System.out.println(&quot;Enter the square number of the property to modify (1-20):&quot;);
+&nbsp;            int n;
+&nbsp;            try {
+&nbsp;                n = Integer.parseInt(scanner.nextLine()) - 1;
+&nbsp;            } catch (NumberFormatException e) {
+&nbsp;                System.out.println(&quot;Invalid property index. Please try again.&quot;);
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+&nbsp;            if (n &gt;= 0 &amp;&amp; n &lt; properties.length &amp;&amp; properties[n].price &gt; 0) {
+&nbsp;                while (true) {
+&nbsp;                    System.out.println(&quot;Enter the new name of the property:&quot;);
+&nbsp;                    String name = scanner.nextLine();
+&nbsp;
+&nbsp;                    // Check if the property name already exists
+&nbsp;                    boolean propertyExists = false;
+&nbsp;                    for (Property property : properties) {
+&nbsp;                        if (property.name.equalsIgnoreCase(name)) {
+&nbsp;                            propertyExists = true;
+&nbsp;                            break;
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;
+&nbsp;                    if (propertyExists) {
+&nbsp;                        System.out.println(&quot;This property already exists in the gameboard. Please enter another name.&quot;);
+&nbsp;                    } else {
+&nbsp;                        System.out.println(&quot;Enter the new price of the property:&quot;);
+&nbsp;                        int price = Integer.parseInt(scanner.nextLine());
+&nbsp;
+&nbsp;                        System.out.println(&quot;Enter the new rent of the property:&quot;);
+&nbsp;                        int rent = Integer.parseInt(scanner.nextLine());
+&nbsp;
+&nbsp;                        modifyGameBoard(n, name, price, rent);
+&nbsp;
+&nbsp;                        System.out.println(&quot;Property modified successfully.&quot;);
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            } else {
+&nbsp;                System.out.println(&quot;This is not a property square. Please enter again.&quot;);
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+&nbsp;            System.out.println(&quot;1. modify another property square\n2. save the gameboard\n3. start playing on your designed gameboard\n(Enter 1/2/3)&quot;);
+&nbsp;            String nextAction = scanner.nextLine();
+&nbsp;
+&nbsp;            if (nextAction.equalsIgnoreCase(&quot;2&quot;)) {
+&nbsp;                saveGameBoard();
+&nbsp;
+&nbsp;                System.out.println(&quot;1. Exit\n2. start playing on your designed gameboard\n(Enter 1/2)&quot;);
+&nbsp;                String Choice = scanner.nextLine();
+&nbsp;
+&nbsp;                if (Choice.equalsIgnoreCase(&quot;1&quot;)) {
+&nbsp;                    System.exit(0); // Exit the program
+&nbsp;
+&nbsp;                } else if (Choice.equalsIgnoreCase(&quot;2&quot;) || nextAction.equalsIgnoreCase(&quot;3&quot;)) {
+&nbsp;                    System.out.println(&quot;Starting the game with the modified gameboard...&quot;);
+&nbsp;                    System.out.println();
+&nbsp;                    break; // Exit the loop to start the game
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void saveGameBoard() {
+&nbsp;        String fileName = &quot;gameboard.csv&quot;;
+&nbsp;
+&nbsp;        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+&nbsp;            writer.write(&quot;Square name, Price, Rent&quot;);
+&nbsp;            writer.newLine();
+&nbsp;            for (Property property : properties) {
+&nbsp;                writer.write(property.name + &quot;,&quot; + property.price + &quot;,&quot; + property.rent + &quot;\n&quot;);
+&nbsp;            }
+&nbsp;            System.out.println(&quot;Gameboard saved successfully.&quot;);
+&nbsp;        } catch (IOException e) {
+&nbsp;            System.out.println(&quot;An error occurred while saving the gameboard.&quot;);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void loadGameBoard() {
+&nbsp;        String fileName = &quot;gameboard.csv&quot;;
+&nbsp;
+&nbsp;        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+&nbsp;            String line;
+&nbsp;            int index = 0;
+&nbsp;
+&nbsp;            // Skip the header line
+&nbsp;            reader.readLine();
+&nbsp;
+&nbsp;            while ((line = reader.readLine()) != null) {
+&nbsp;                String[] parts = line.split(&quot;,&quot;);
+&nbsp;                if (parts.length == 3) {
+&nbsp;                    String name = parts[0];
+&nbsp;                    int price = Integer.parseInt(parts[1].trim());
+&nbsp;                    int rent = Integer.parseInt(parts[2].trim());
+&nbsp;                    properties[index] = new Property(name, price, rent);
+&nbsp;                    index++;
+&nbsp;                }
+&nbsp;            }
+&nbsp;            System.out.println(&quot;Gameboard loaded successfully.&quot;);
+&nbsp;
+&nbsp;            Scanner scanner = new Scanner(System.in);
+&nbsp;            while (true) {
+&nbsp;                System.out.println(&quot;Do you want to modify the loaded gameboard or start playing on it?&quot;);
+&nbsp;                System.out.println(&quot;1. Modify the gameboard\n2. Start playing&quot;);
+&nbsp;                String choice = scanner.nextLine();
+&nbsp;
+&nbsp;                if (choice.equals(&quot;1&quot;)) {
+&nbsp;                    designNewGameboard();
+&nbsp;                    break;
+&nbsp;                } else if (choice.equals(&quot;2&quot;)) {
+&nbsp;                    System.out.println(&quot;Starting the game with the loaded gameboard...&quot;);
+&nbsp;                    break;
+&nbsp;                } else {
+&nbsp;                    System.out.println(&quot;Invalid choice. Please enter 1 or 2.&quot;);
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (IOException e) {
+&nbsp;            System.out.println(&quot;An error occurred while loading the gameboard.&quot;);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void main(String[] args) throws IOException {
+&nbsp;        MonopolyGame game = new MonopolyGame();
+&nbsp;        Scanner scanner = new Scanner(System.in);
+&nbsp;
+&nbsp;        System.out.println(&quot;Hi, Welcome to Monopoly Game!&quot;);
+&nbsp;        while (true) {
+&nbsp;            System.out.println(&quot;1. Start a new game\n2. Continue progress from last play&quot;);
+&nbsp;            String choice = scanner.nextLine();
+&nbsp;
+&nbsp;            if (choice.equals(&quot;1&quot;) || choice.equals(&quot;2&quot;)) {
+&nbsp;                if (choice.equals(&quot;2&quot;)) {
+&nbsp;                    game.loadGame();
+&nbsp;                    break;
+&nbsp;                }
+&nbsp;                break;
+&nbsp;            } else {
+&nbsp;                System.out.println(&quot;Invalid choice. Please enter 1 or 2.&quot;);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        while (true) {
+&nbsp;            System.out.println(&quot;Do you want to play on an existing gameboard or a custom gameboard? (existing/custom)&quot;);
+&nbsp;            System.out.println(&quot;Note: If you want to continue from your last game, please enter the existing gameboard and select the previous gameboard you played.&quot;);
+&nbsp;            String boardChoice = scanner.nextLine();
+&nbsp;
+&nbsp;            if (boardChoice.equalsIgnoreCase(&quot;existing&quot;)) {
+&nbsp;                break;
+&nbsp;            } else if (boardChoice.equalsIgnoreCase(&quot;custom&quot;)) {
+&nbsp;                while (true) {
+&nbsp;                    System.out.println(&quot;1. Load the gameboard you created before\n2. Create new gameboard&quot;);
+&nbsp;                    String action = scanner.nextLine();
+&nbsp;
+&nbsp;                    if (action.equals(&quot;1&quot;)) {
+&nbsp;                        game.loadGameBoard();
+&nbsp;                        break;
+&nbsp;                    } else if (action.equals(&quot;2&quot;)) {
+&nbsp;                        game.designNewGameboard();
+&nbsp;                        break;
+&nbsp;                    } else {
+&nbsp;                        System.out.println(&quot;Invalid choice. Please enter 1 or 2.&quot;);
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                break;
+&nbsp;            } else {
+&nbsp;                System.out.println(&quot;Invalid choice. Please enter &#39;existing&#39; or &#39;custom&#39;.&quot;);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        List&lt;Player&gt; players = new ArrayList&lt;&gt;();
+&nbsp;        String qinput = &quot;1&quot;;
+&nbsp;        int count = 0;
+&nbsp;        String fileName = &quot;monopoly_game_state.csv&quot;;
+&nbsp;        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+&nbsp;        while (reader.readLine() != null) count++;
+&nbsp;        reader.close();
+&nbsp;        count-=1;
+&nbsp;
+&nbsp;        while (qinput.equals(&quot;1&quot;)) {
+&nbsp;            System.out.println(&quot;1. Enter your name\n2. Generate a random name\n3. Start the game&quot;);
+&nbsp;            String input = scanner.nextLine();
+&nbsp;            String name = null;
+&nbsp;
+&nbsp;
+&nbsp;            if (input.equals(&quot;1&quot;)) {
+&nbsp;                System.out.println(&quot;Please enter your name: &quot;);
+&nbsp;                name = scanner.nextLine();
+&nbsp;                if (!name.trim().isEmpty()) {
+&nbsp;                    game.addPlayer(name);
+&nbsp;                    count++;
+&nbsp;                } else {
+&nbsp;                    System.out.println(&quot;Invalid name. Please enter your name again.&quot;);
+&nbsp;                    continue;
+&nbsp;                }
+&nbsp;            } else if (input.equals(&quot;2&quot;)) {
+&nbsp;                String randomName = RandomNameGenerator.generateRandomName();
+&nbsp;                game.addPlayer(randomName);
+&nbsp;                System.out.println(&quot;Your name is: &quot; + randomName);
+&nbsp;                count++;
+&nbsp;            } else if(input.equals(&quot;3&quot;)){
+&nbsp;                break;
+&nbsp;            } else {
+&nbsp;                System.out.println(&quot;Error input! Please enter 1 or 2.&quot;);
+&nbsp;                continue;
+&nbsp;            }
+&nbsp;
+&nbsp;            System.out.println(&quot;1. Add more players\n2. Finish entering names, start the game&quot;);
+&nbsp;            qinput = scanner.nextLine();
+&nbsp;        }
+&nbsp;
+&nbsp;        if (count &gt;= 2 &amp;&amp; count &lt;= 6) {
+&nbsp;            System.out.println(&quot;Game start&quot;);
+&nbsp;            for (int round = 0; round &lt; 100; round++) {
+&nbsp;                for (int i = 0; i &lt; game.players.size(); i++) {
+&nbsp;                    Player currentPlayer = game.players.get(game.currentPlayerIndex);
+&nbsp;                    if (currentPlayer.money &lt; 0) {
+&nbsp;                        // System.out.println(&quot;Sorry, You go bankrupt.&quot;);
+&nbsp;                        game.currentPlayerIndex = (game.currentPlayerIndex + 1) % game.players.size();
+&nbsp;                        game.removeProperty(currentPlayer);
+&nbsp;                        game.removePlayer(currentPlayer.name);
+&nbsp;                    }
+&nbsp;                    if (game.players.size() &lt;= 1) {
+&nbsp;                        Player cPlayer = game.players.get(game.currentPlayerIndex);
+&nbsp;                        System.out.println(cPlayer.name + &quot; wins!&quot;);
+&nbsp;                        System.exit(0);
+&nbsp;                    }
+&nbsp;                    game.playTurn();
+&nbsp;                }
+&nbsp;                // when the 100 rounds end, find out the final winner
+&nbsp;                if(round == 99){
+&nbsp;                    
+&nbsp;                }
+&nbsp;
+&nbsp;            }
+&nbsp;            Player winner = game.players.stream().max(Comparator.comparingInt(player -&gt; player.money)).orElse(null);
+&nbsp;            if (winner != null) {
+&nbsp;                System.out.println(&quot;Game over! &quot; + winner.name + &quot; wins! He has the most money!&quot;);
+&nbsp;            }
+&nbsp;        } else {
+&nbsp;            System.out.println(&quot;Not enough players to start the game&quot;);
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-21 19:00</div>
+</div>
+</body>
+</html>

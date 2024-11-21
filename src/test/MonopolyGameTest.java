@@ -1,3 +1,7 @@
+import model.MonopolyGame;
+import model.Player;
+import model.Property;
+import model.RandomNameGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -11,11 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class MonopolyGameTest {
-    private MonopolyGame game; // Assuming the class containing addPlayer is called Game
-    private List<Player> players;
-    private Player player;
+    private model.MonopolyGame game; // Assuming the class containing addPlayer is called Game
+    public List<Player> players;
+    public Player player;
+    public Property properties;
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
 
     @BeforeEach
@@ -258,7 +263,7 @@ class MonopolyGameTest {
         Player player = new Player("Player");
         game.addPlayer(player.getName());
 
-        player.position = 0;
+        player.setPosition(0);
         player.state = 1;
         game.handleGo(player);
 
